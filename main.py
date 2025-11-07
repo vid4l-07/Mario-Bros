@@ -33,11 +33,15 @@ class Jugador:
 
 MAPA = Imagen(1, (0, 12), (240, 136))
 MARIO: Imagen = Imagen(0, (0, 0), (16, 16))
-LUIGI: Imagen = Imagen(0, (0, 17), (16, 16))
+LUIGI: Imagen = Imagen(0, (0, 16), (16, 16))
 
 class Partida:
-    def __init__(self, mapa: Imagen) -> None:
+    def __init__(self, mapa: Imagen, mario: Imagen, luigi: Imagen) -> None:
         self.mapa = mapa
+        self.mario = mario
+        self.luigi = luigi
+        self.posiciones_mario = [(173,113), (173, 78), (173, 38)]
+        self.posiciones_luigi = [(55,96), (55,60), (55,22)]
         
         pyxel.init(mapa.ancho, mapa.alto)
         pyxel.load('my_resource.pyxres')
@@ -50,6 +54,8 @@ class Partida:
     def dibujar(self) -> None:
         pyxel.cls(0)
         self.mapa.renderizar((0, 0))
+        self.mario.renderizar(self.posiciones_mario[0])
+        self.luigi.renderizar(self.posiciones_luigi[0])
 
 if __name__ == '__main__':
-    Partida(MAPA)
+    Partida(MAPA, MARIO, LUIGI)
