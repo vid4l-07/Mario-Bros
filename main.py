@@ -1,17 +1,17 @@
 import pyxel
 
 class Imagen:
-    def __init__(self, imagen: int, posicion: tuple[int, int], tamano: tuple[int, int]) -> None:
+    def __init__(self, imagen, posicion, tamano):
         self.x, self.y = posicion
         self.ancho, self.alto = tamano
         self.imagen = imagen
 
-    def renderizar(self, posicion: tuple[int, int]) -> None:
+    def draw(self, posicion):
         x, y = posicion
         pyxel.blt(x, y, self.imagen, self.x, self.y, self.ancho, self.alto)
 
 class Jugador:
-    def __init__(self, posicion: int, imagen: Imagen, escalones: list[int], teclas) -> None:
+    def __init__(self, posicion, imagen, escalones, teclas):
         self.x = posicion
         self.y = 0
         self.imagen = imagen
@@ -19,7 +19,7 @@ class Jugador:
         self.posicion = 0
         self.arriba, self.abajo = teclas
 
-    def actualizar(self) -> None:
+    def update(self):
         n = len(self.escalones)
         if pyxel.btnp(self.arriba):
             self.posicion = min(self.posicion + 1, n - 1)
@@ -28,34 +28,39 @@ class Jugador:
 
         self.y = self.escalones[self.posicion]
 
-    def renderizar(self) -> None:
-        self.imagen.renderizar((self.x, self.y))
+    def draw(self):
+        self.imagen.draw((self.x, self.y))
 
 MAPA = Imagen(1, (0, 12), (240, 136))
 MARIO: Imagen = Imagen(0, (0, 0), (16, 16))
 LUIGI: Imagen = Imagen(0, (0, 16), (16, 16))
+PAQUETE = Imagen(2, (136, 36), (8, 3))
 
 class Partida:
     def __init__(self, mapa: Imagen, mario: Imagen, luigi: Imagen) -> None:
         self.mapa = mapa
+        self.railes = [(224, 111)]
         self.mario = mario
         self.luigi = luigi
         self.posiciones_mario = [(173,113), (173, 78), (173, 38)]
         self.posiciones_luigi = [(55,96), (55,60), (55,22)]
         
+
         pyxel.init(mapa.ancho, mapa.alto)
         pyxel.load('my_resource.pyxres')
-        pyxel.run(self.actualizar, self.dibujar)
+        pyxel.run(self.update, self.draw)
 
-    def actualizar(self) -> None:
+    def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
-    def dibujar(self) -> None:
+        
+    def draw(self):
         pyxel.cls(0)
-        self.mapa.renderizar((0, 0))
-        self.mario.renderizar(self.posiciones_mario[0])
-        self.luigi.renderizar(self.posiciones_luigi[0])
+        self.mapa.draw((0, 0))
+        self.mario.draw(self.posiciones_mario[0])
+        self.luigi.draw(self.posiciones_luigi[0])
+        PAQUETE.draw((self.railes[0][0] - PAQUETE.ancho, self.railes[0][1] - PAQUETE.alto))
 
 if __name__ == '__main__':
     Partida(MAPA, MARIO, LUIGI)
