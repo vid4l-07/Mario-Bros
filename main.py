@@ -8,7 +8,7 @@ class Imagen:
 
     def draw(self, posicion):
         x, y = posicion
-        pyxel.blt(x, y, self.imagen, self.x, self.y, self.ancho, self.alto)
+        pyxel.blt(x, y, self.imagen, self.x, self.y, self.ancho, self.alto, colkey=7)
 
 class Jugador:
     def __init__(self, posicion, imagen, escalones, teclas):
@@ -62,12 +62,14 @@ class Estado:
         if self.condicion == None:
             self.imagen.draw(self.posicion)
 
-PAQUETE_1_1 = Imagen(0, (217, 108), (9, 4))
-PAQUETE_1_2 = Imagen(0, (127, 108), (3, 4))
+PAQUETE_1_1 = Imagen(2, (0, 152), (9, 4))
+PAQUETE_1_2 = Imagen(2, (0, 152), (3, 4))
+PAQUETE_1_3 = Imagen(2, (9, 152), (9, 9))
 
 CAMINO = [
     Estado(PAQUETE_1_1, (217, 108)),
     Estado(PAQUETE_1_1, (206, 108)),
+    Estado(PAQUETE_1_3, (195, 108)),
     Estado(PAQUETE_1_1, (143, 108)),
     Estado(PAQUETE_1_1, (132, 108)),
     Estado(PAQUETE_1_2, (127, 108)),
@@ -86,7 +88,7 @@ class Partida:
             pyxel.quit()
 
     def draw(self):
-        pyxel.cls(0)
+        pyxel.cls(7)
         self.mapa.draw((0, 0))
         for estado in CAMINO:
             estado.draw()
