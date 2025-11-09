@@ -49,21 +49,33 @@ class Jugador:
 
 # Un paquete empieza siendo el número 0. Y va avanzando: 1, 2, 3. Cada número corresponde
 # a un estado. Hay algunos estados que necesitan una condición. La condición es un
-# personaje y una posición.
+# personaje y una posición. El camino sigue únicamente si el personaje está en la posición.
 class Estado:
-    def __init__(self, imagen, posicion, estado, condicion = None):
+    def __init__(self, imagen, posicion, condicion = None):
         self.imagen = imagen # imagen a dibujar
         self.posicion = posicion # posicion (x, y) del paquete
         # ejemplo de condicion
-        # diccionario: { personaje: mario, posicion: 2 }
+        # diccionario: (mario, 2)
         self.condicion = condicion
 
     def draw(self):
-        self.imagen.draw(self.posicion)
+        if self.condicion == None:
+            self.imagen.draw(self.posicion)
+
+PAQUETE_1_1 = Imagen(0, (217, 108), (9, 4))
+PAQUETE_1_2 = Imagen(0, (127, 108), (3, 4))
+
+CAMINO = [
+    Estado(PAQUETE_1_1, (217, 108)),
+    Estado(PAQUETE_1_1, (206, 108)),
+    Estado(PAQUETE_1_1, (143, 108)),
+    Estado(PAQUETE_1_1, (132, 108)),
+    Estado(PAQUETE_1_2, (127, 108)),
+] # camino de ejemplo
 
 class Partida:
     def __init__(self):
-        self.mapa = Imagen(1, (0, 12), (240, 136))
+        self.mapa = Imagen(1, (0, 0), (240, 136))
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
         pyxel.load('my_resource.pyxres')
@@ -76,6 +88,8 @@ class Partida:
     def draw(self):
         pyxel.cls(0)
         self.mapa.draw((0, 0))
+        for estado in CAMINO:
+            estado.draw()
 
 if __name__ == '__main__':
     Partida()
