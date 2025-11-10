@@ -66,6 +66,8 @@ PAQUETE_1_1 = Imagen(2, (0, 152), (9, 4))
 PAQUETE_1_2 = Imagen(2, (0, 152), (3, 4))
 PAQUETE_1_3 = Imagen(2, (9, 152), (9, 9))
 
+MARIO_1_1 = Imagen(2, (18, 152), (27, 26))
+
 CAMINO = [
     Estado(PAQUETE_1_1, (217, 108)),
     Estado(PAQUETE_1_1, (206, 108)),
@@ -90,6 +92,7 @@ class Partida:
     def draw(self):
         pyxel.cls(7)
         self.mapa.draw((0, 0))
+        MARIO_1_1.draw((173, 103))
         for estado in CAMINO:
             estado.draw()
 
