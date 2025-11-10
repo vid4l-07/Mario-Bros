@@ -59,27 +59,30 @@ class Estado:
         self.condicion = condicion
 
     def draw(self):
-        if self.condicion == None:
-            self.imagen.draw(self.posicion)
+        # Falta implementar la condición
+        self.imagen.draw(self.posicion)
 
 PAQUETE_1_1 = Imagen(2, (0, 152), (9, 4))
 PAQUETE_1_2 = Imagen(2, (0, 152), (3, 4))
 PAQUETE_1_3 = Imagen(2, (9, 152), (9, 9))
 
 MARIO_1_1 = Imagen(2, (18, 152), (27, 26))
-
-CAMINO = [
-    Estado(PAQUETE_1_1, (217, 108)),
-    Estado(PAQUETE_1_1, (206, 108)),
-    Estado(PAQUETE_1_3, (195, 108)),
-    Estado(PAQUETE_1_1, (143, 108)),
-    Estado(PAQUETE_1_1, (132, 108)),
-    Estado(PAQUETE_1_2, (127, 108)),
-] # camino de ejemplo
+# MARIO_1_2 = Imagen(2, (), ())
 
 class Partida:
     def __init__(self):
+        self.frame = 0
         self.mapa = Imagen(1, (0, 0), (240, 136))
+        self.mario = Jugador(173, MARIO_1_1, [103], (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.CAMINO = [
+            Estado(PAQUETE_1_1, (217, 108)),
+            Estado(PAQUETE_1_1, (206, 108)),
+            Estado(PAQUETE_1_3, (195, 108), (self.mario, 0)),
+            Estado(PAQUETE_1_1, (143, 108)),
+            Estado(PAQUETE_1_1, (132, 108)),
+            Estado(PAQUETE_1_2, (127, 108)),
+        ] # camino de ejemplo
+        self.paquete = 0 # paquete de ejemplo
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
         pyxel.load('my_resource.pyxres')
@@ -89,12 +92,22 @@ class Partida:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
+        self.frame += 1
+        if self.frame % 10 == 0:
+            self.frame = 0
+            self.paquete += 1
+            if self.paquete >= len(self.CAMINO):
+                self.paquete = 0
+
     def draw(self):
         pyxel.cls(7)
         self.mapa.draw((0, 0))
         MARIO_1_1.draw((173, 103))
-        for estado in CAMINO:
-            estado.draw()
+
+        self.CAMINO[self.paquete].draw()
+
+        # for estado in self.CAMINO:
+        #     estado.draw()
 
 if __name__ == '__main__':
     Partida()
