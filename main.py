@@ -11,26 +11,51 @@ class Imagen:
         pyxel.blt(x, y, self.imagen, self.x, self.y, self.ancho, self.alto, colkey=7)
 
 class Jugador:
-    def __init__(self, posicion, imagen, escalones, teclas):
-        self.x = posicion
-        self.y = 0
+    posicion:int
+    posiciones:list
+    def __init__(self, posiciones: list, imagen: Imagen, num_escalones: int, teclas) -> None:
+        self.num_escalones = num_escalones
+        try:
+            self.posiciones.remove(posiciones[num_escalones])
+        except:
+            pass
+
+        self.posiciones = posiciones 
+        self.posicion = 0 # ahora esta variable posicion se podria usar para la condicion de los paquetes que decias
         self.imagen = imagen
-        self.escalones = escalones
-        self.posicion = 0
         self.arriba, self.abajo = teclas
 
-    def update(self):
-        n = len(self.escalones)
+    def update(self) -> None:
         if pyxel.btnp(self.arriba):
-            self.posicion = min(self.posicion + 1, n - 1)
+            self.posicion = min(self.posicion + 1, self.num_escalones - 1)
+
         elif pyxel.btnp(self.abajo):
             self.posicion = max(self.posicion - 1, 0)
 
-        self.y = self.escalones[self.posicion]
-
-    def draw(self):
+    def draw(self) -> None:
+        self.x, self.y = self.posiciones[self.posicion]
         self.imagen.draw((self.x, self.y))
 
+    # def __init__(self, posicion, imagen, escalones, teclas):
+    #     self.x = posicion
+    #     self.y = 0
+    #     self.imagen = imagen
+    #     self.escalones = escalones
+    #     self.posicion = 0
+    #     self.arriba, self.abajo = teclas
+    #
+    # def update(self):
+    #     n = len(self.escalones)
+    #     if pyxel.btnp(self.arriba):
+    #         self.posicion = min(self.posicion + 1, n - 1)
+    #     elif pyxel.btnp(self.abajo):
+    #         self.posicion = max(self.posicion - 1, 0)
+    #
+    #     self.y = self.escalones[self.posicion]
+    #
+    # def draw(self):
+    #     self.imagen.draw((self.x, self.y))
+    #
 # Los paquetes no se mueven con fluidez. Van dando saltos. Hay un número limitado
 # de posición en las que puede estár un paquete. La clase 'Estado' representa
 # una imagen en un lugar. Sólo hay que determinar si se debe dibujar o no.
@@ -72,8 +97,10 @@ MARIO_1_2 = Imagen(2, (45, 152), (27, 26))
 class Partida:
     def __init__(self):
         self.frame = 0
+        self.posiciones_mario = [(173,103), (173, 68), (173, 28)]
+        self.posiciones_luigi = [(55,96), (55,60), (55,22)]
         self.mapa = Imagen(1, (0, 0), (240, 136))
-        self.mario = Jugador(173, MARIO_1_1, [103], (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.mario = Jugador(self.posiciones_mario, MARIO_1_1, 3, (pyxel.KEY_UP, pyxel.KEY_DOWN))
         self.CAMINO = [
             Estado(PAQUETE_1_1, (217, 108)),
             Estado(PAQUETE_1_1, (206, 108)),
@@ -90,6 +117,7 @@ class Partida:
         pyxel.run(self.update, self.draw)
 
     def update(self):
+        self.mario.update()
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
@@ -103,7 +131,8 @@ class Partida:
     def draw(self):
         pyxel.cls(7)
         self.mapa.draw((0, 0))
-        MARIO_1_1.draw((173, 103))
+        self.mario.draw()
+        # MARIO_1_1.draw((173, 103))
 
         self.CAMINO[self.paquete].draw()
 
