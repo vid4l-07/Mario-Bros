@@ -20,7 +20,7 @@ class Jugador:
         except:
             pass
 
-        self.posiciones = posiciones 
+        self.posiciones = posiciones
         self.posicion = 0 # ahora esta variable posicion se podria usar para la condicion de los paquetes que decias
         self.imagen = imagen
         self.arriba, self.abajo = teclas
@@ -75,6 +75,12 @@ class Jugador:
 # Un paquete empieza siendo el número 0. Y va avanzando: 1, 2, 3. Cada número corresponde
 # a un estado. Hay algunos estados que necesitan una condición. La condición es un
 # personaje y una posición. El camino sigue únicamente si el personaje está en la posición.
+
+# He visto el documento y parece que hay que crear clases para los elementos principales.
+# Igual deberíamos hacer una clase Paquete que incluya la imagen y el número de posición.
+# Otra clase Cinta, que sólo va a ser un wrapper de las diferentes posiciones que puede
+# tener un paquete dentro de la cinta.
+# Y poco más.
 class Estado:
     def __init__(self, imagen, posicion, condicion = None):
         self.imagen = imagen # imagen a dibujar
