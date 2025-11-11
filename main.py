@@ -56,31 +56,18 @@ class Jugador:
     # def draw(self):
     #     self.imagen.draw((self.x, self.y))
     #
-# Los paquetes no se mueven con fluidez. Van dando saltos. Hay un número limitado
-# de posición en las que puede estár un paquete. La clase 'Estado' representa
-# una imagen en un lugar. Sólo hay que determinar si se debe dibujar o no.
-# De este modo los paquetes pueden ser representados como una posición en una lista
-# de estados.
 
-# Entonces, el juego puede representarse como un camino a seguir. El problema es
-# que el camino depende del jugador. Si un paquete se cae porque el jugador no está
-# en su sitio el camino de estados cambia.
+# Primera opción:
+# Los paquetes son un número que va incrementando. Cada número equivale a una imagen y
+# una posición. De este, el juego se puede representar como una lista de estados o
+# posiciones.
 
-# Eso significa que hay algunos estados con ramas. Hay algunos estados que únicamente
-# tienen un posible paso siguiente. Pero hay otros estados que pueden tener más pasos.
-# Si un estado representa un paquete al borde de caer, hay dos posibilidades: una es que
-# el jugador esté bien posicionado y el paquete continue su camino con normalidad. Y la
-# otra es que el jugador no esté en el sitio adecuado y el paquete caiga. Dos caminos.
-
-# Un paquete empieza siendo el número 0. Y va avanzando: 1, 2, 3. Cada número corresponde
-# a un estado. Hay algunos estados que necesitan una condición. La condición es un
-# personaje y una posición. El camino sigue únicamente si el personaje está en la posición.
-
+# Segunda opción:
 # He visto el documento y parece que hay que crear clases para los elementos principales.
 # Igual deberíamos hacer una clase Paquete que incluya la imagen y el número de posición.
 # Otra clase Cinta, que sólo va a ser un wrapper de las diferentes posiciones que puede
 # tener un paquete dentro de la cinta.
-# Y poco más.
+# Hay que preguntar si es 100% necesario porque es una movida.
 class Estado:
     def __init__(self, imagen, posicion, condicion = None):
         self.imagen = imagen # imagen a dibujar
