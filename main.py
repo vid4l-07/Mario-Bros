@@ -1,3 +1,5 @@
+from operator import le
+from typing import Self
 import pyxel
 
 class Imagen:
@@ -43,14 +45,53 @@ PAQUETE_1_3 = Imagen(2, (9, 152), (9, 9))
 MARIO_1_1 = Imagen(2, (18, 152), (27, 26))
 MARIO_1_2 = Imagen(2, (45, 152), (27, 26))
 
-class Paquete:
+class Estado:
+    imagen: Imagen
+    posicion: tuple[int, int]
     def __init__(self, imagen: Imagen, posicion: tuple[int, int]):
-        pass
+        self.imagen = imagen
+        self.posicion = posicion
+
+    def draw(self):
+        self.imagen.draw(self.posicion)
 
 class Cinta:
-    paquetes: list[Paquete]
-    def __init__(self, paquetes: list[Paquete]):
-        self.paquetes = paquetes
+    paquetes: list[int]
+    estados: list[Estado]
+    siguiente: Self | None
+    def __init__(self, estados: list[Estado], siguiente: Self | None = None):
+        self.paquetes = []
+        self.estados = estados
+        self.siguiente = siguiente
+
+    def añadir_paquete(self):
+        self.paquetes.append(0)
+
+    def draw(self):
+        for paquete in self.paquetes:
+            if paquete < len(self.estados):
+                self.estados[paquete].draw()
+
+    def paso(self):
+        for i, paquete in enumerate(self.paquetes):
+            self.paquetes[i] += 1
+            if paquete >= len(self.estados):
+                del self.paquetes[i]
+                if self.siguiente != None:
+                    self.siguiente.añadir_paquete()
+
+cinta1 = Cinta([
+        Estado(PAQUETE_1_1, (154, 108)),
+        Estado(PAQUETE_1_1, (143, 108)),
+        Estado(PAQUETE_1_1, (132, 108)),
+        Estado(PAQUETE_1_2, (127, 108)),
+    ], None)
+cinta0 = Cinta([
+        Estado(PAQUETE_1_1, (217, 108)),
+        Estado(PAQUETE_1_1, (206, 108)),
+        Estado(PAQUETE_1_3, (195, 108)),
+    ], cinta1)
+cinta0.añadir_paquete()
 
 # self.CAMINO = [
 #     Estado(PAQUETE_1_1, (217, 108)),
@@ -82,10 +123,19 @@ class Partida:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
+        cinta: Cinta | None = cinta0
+        while cinta != None:
+            cinta.paso()
+            cinta = cinta.siguiente
+
     def draw(self):
         pyxel.cls(7)
         self.mapa.draw((0, 0))
         self.mario.draw()
+        cinta: Cinta | None = cinta0
+        while cinta != None:
+            cinta.draw()
+            cinta = cinta.siguiente
 
 if __name__ == '__main__':
     _ = Partida()
