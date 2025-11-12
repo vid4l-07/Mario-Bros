@@ -1,4 +1,3 @@
-from operator import le
 from typing import Self
 import pyxel
 
