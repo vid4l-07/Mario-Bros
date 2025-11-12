@@ -1,3 +1,4 @@
+import random
 from typing import Self
 import pyxel
 
@@ -112,6 +113,9 @@ class Partida:
         self.posiciones_luigi = [(55,96), (55,60), (55,22)]
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador(self.posiciones_mario, MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.frame = 0
+        self.dificultad = 3
+        self.velocidad = 10
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
         pyxel.load('my_resource.pyxres')
@@ -121,11 +125,22 @@ class Partida:
         self.mario.update()
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-
+ 
+        self.frame += 1
         cinta: Cinta | None = cinta0
+        
+        velocidades = [[self.velocidad] * 3, 
+                     [self.velocidad, self.velocidad * 1.5, self.velocidad * 1.5],
+                     [self.velocidad, self.velocidad * 1.5, self.velocidad * 2],
+                     [self.velocidad, self.velocidad * random.randrange(1,2), self.velocidad * random.randrange(1,2)]]
+        velocidad = velocidades[self.dificultad]
+
+        num_cinta = 0
         while cinta != None:
-            cinta.paso()
+            if self.frame % velocidad[num_cinta % 2] == 0:
+                cinta.paso()
             cinta = cinta.siguiente
+            num_cinta += 1
 
     def draw(self):
         pyxel.cls(7)
