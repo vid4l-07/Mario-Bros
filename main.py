@@ -52,6 +52,16 @@ class Cinta:
     def __init__(self, paquetes: list[Paquete]):
         self.paquetes = paquetes
 
+# self.CAMINO = [
+#     Estado(PAQUETE_1_1, (217, 108)),
+#     Estado(PAQUETE_1_1, (206, 108)),
+#     Estado(PAQUETE_1_3, (195, 108), (self.mario, 0)),
+#     Estado(PAQUETE_1_1, (154, 108)),
+#     Estado(PAQUETE_1_1, (143, 108)),
+#     Estado(PAQUETE_1_1, (132, 108)),
+#     Estado(PAQUETE_1_2, (127, 108)),
+# ] # camino de ejemplo
+
 class Partida:
     posiciones_mario: list[tuple[int, int]]
     posiciones_luigi: list[tuple[int, int]]
