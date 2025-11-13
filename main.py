@@ -73,40 +73,19 @@ class Cinta:
                 if self.siguiente != None:
                     self.siguiente.añadir_paquete()
 
-PAQUETE_0_LARGO = Imagen(2, (0, 152), (9, 4))
-PAQUETE_2 = Imagen(2, (0, 152), (3, 4))
-PAQUETE_3 = Imagen(2, (9, 152), (9, 9))
-PAQUETE_4 = Imagen(2, (151, 94), (9, 7))
-PAQUETE_5 = Imagen(2, (152, 94), (8, 7))
-PAQUETE_6 = Imagen(0, (110, 86), (4, 7))
-PAQUETE_7 = Imagen(0, (99, 86), (9, 7))
-
 MARIO_1_1 = Imagen(2, (18, 152), (27, 26))
 MARIO_1_2 = Imagen(2, (45, 152), (27, 26))
 
-cinta3 = Cinta([
-        Estado(PAQUETE_6, (110, 86)),
-        Estado(PAQUETE_7, (99, 86)),
-        Estado(PAQUETE_7, (88, 86)),
-        Estado(PAQUETE_7, (77, 86)),
-    ])
-cinta2 = Cinta([
-        Estado(PAQUETE_4, (148, 86)),
-        Estado(PAQUETE_4, (137, 86)),
-        Estado(PAQUETE_5, (127, 86)),
-    ], cinta3)
-cinta1 = Cinta([
-        Estado(PAQUETE_0_LARGO, (154, 108)),
-        Estado(PAQUETE_0_LARGO, (143, 108)),
-        Estado(PAQUETE_0_LARGO, (132, 108)),
-        Estado(PAQUETE_2, (127, 108)),
-    ], cinta2)
-cinta0 = Cinta([
-        Estado(PAQUETE_0_LARGO, (217, 108)),
-        Estado(PAQUETE_0_LARGO, (206, 108)),
-        Estado(PAQUETE_3, (195, 108)),
-    ], cinta1)
-cinta0.añadir_paquete()
+# Cada cinta tiene el mismo número de posiciones separados la misma distancia.
+# Eso significa que basta con saber la primera coordenada para generar el
+# resto. La única excepción son las cintas que funcionan hacia fuera, es decir,
+# las dintas que pueden dejar caer un paquete.
+
+# Las cintas de las que se pueden caer los paquetes son pares 100%. De todos
+# modos se puede especificar a la hora de definir la cinta. El resto sigue
+# siendo automático.
+
+# Todavía no está hecho. Pero debería ser fácil.
 
 class Partida:
     posiciones_mario: list[tuple[int, int]]
@@ -131,30 +110,30 @@ class Partida:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
  
-        self.frame += 1
-        cinta: Cinta | None = cinta0
-        
-        velocidades = [[self.velocidad] * 3, 
-                     [self.velocidad, self.velocidad * 1.5, self.velocidad * 1.5],
-                     [self.velocidad, self.velocidad * 1.5, self.velocidad * 2],
-                     [self.velocidad, self.velocidad * random.randrange(1,2), self.velocidad * random.randrange(1,2)]]
-        velocidad = velocidades[self.dificultad]
-
-        num_cinta = 0
-        while cinta != None:
-            if self.frame % velocidad[num_cinta % 2] == 0:
-                cinta.paso()
-            cinta = cinta.siguiente
-            num_cinta += 1
+        # self.frame += 1
+        # cinta: Cinta | None = cinta0
+        #
+        # velocidades = [[self.velocidad] * 3, 
+        #              [self.velocidad, self.velocidad * 1.5, self.velocidad * 1.5],
+        #              [self.velocidad, self.velocidad * 1.5, self.velocidad * 2],
+        #              [self.velocidad, self.velocidad * random.randrange(1,2), self.velocidad * random.randrange(1,2)]]
+        # velocidad = velocidades[self.dificultad]
+        #
+        # num_cinta = 0
+        # while cinta != None:
+        #     if self.frame % velocidad[num_cinta % 2] == 0:
+        #         cinta.paso()
+        #     cinta = cinta.siguiente
+        #     num_cinta += 1
 
     def draw(self):
         pyxel.cls(7)
-        self.mapa.draw((0, 0))
+        # cinta: Cinta | None = cinta0
+        # while cinta != None:
+        #     cinta.draw()
+        #     cinta = cinta.siguiente
         self.mario.draw()
-        cinta: Cinta | None = cinta0
-        while cinta != None:
-            cinta.draw()
-            cinta = cinta.siguiente
+        self.mapa.draw((0, 0))
 
 if __name__ == '__main__':
     _ = Partida()
