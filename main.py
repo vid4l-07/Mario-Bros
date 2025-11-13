@@ -93,16 +93,6 @@ cinta0 = Cinta([
     ], cinta1)
 cinta0.añadir_paquete()
 
-# self.CAMINO = [
-#     Estado(PAQUETE_1_1, (217, 108)),
-#     Estado(PAQUETE_1_1, (206, 108)),
-#     Estado(PAQUETE_1_3, (195, 108), (self.mario, 0)),
-#     Estado(PAQUETE_1_1, (154, 108)),
-#     Estado(PAQUETE_1_1, (143, 108)),
-#     Estado(PAQUETE_1_1, (132, 108)),
-#     Estado(PAQUETE_1_2, (127, 108)),
-# ] # camino de ejemplo
-
 class Partida:
     posiciones_mario: list[tuple[int, int]]
     posiciones_luigi: list[tuple[int, int]]
@@ -128,16 +118,20 @@ class Partida:
  
         self.frame += 1
         cinta: Cinta | None = cinta0
-        
+
+        num_cinta = 0
         velocidades = [[self.velocidad] * 3, 
                      [self.velocidad, self.velocidad * 1.5, self.velocidad * 1.5],
                      [self.velocidad, self.velocidad * 1.5, self.velocidad * 2],
                      [self.velocidad, self.velocidad * random.randrange(1,2), self.velocidad * random.randrange(1,2)]]
-        velocidad = velocidades[self.dificultad]
 
-        num_cinta = 0
         while cinta != None:
-            if self.frame % velocidad[num_cinta % 2] == 0:
+            if num_cinta == 0:
+                velocidad = velocidades[self.dificultad][0]
+            else:
+                velocidad = velocidades[self.dificultad][num_cinta % 2]
+
+            if self.frame % velocidad == 0:
                 cinta.paso()
             cinta = cinta.siguiente
             num_cinta += 1
