@@ -106,6 +106,27 @@ PAQUETE_1_CAIDA = Imagen(2, (9, 152), (9, 9))
 PAQUETE_2 = Imagen(2, (109, 113), (9, 7))
 PAQUETE_2_CAIDA = Imagen(2, (75, 114), (10, 10))
 
+PAQUETE_3 = Imagen(2, (151, 94), (9, 7))
+PAQUETE_3_CAIDA = Imagen(2, (162, 94), (10, 11))
+
+PAQUETE_4 = Imagen(2, (109, 73), (9, 9))
+PAQUETE_4_CAIDA = Imagen(2, (0, 164), (11, 12))
+
+PAQUETE_5 = Imagen(2, (136, 36), (9, 9))
+PAQUETE_5_CAIDA = Imagen(2, (0, 184), (12, 12))
+
+PAQUETE_6 = Imagen(2, (109, 36), (9, 9))
+PAQUETE_6_CAIDA = Imagen(2, (16, 184), (13, 13))
+
+# TODO: corrección de caida
+cinta10 = Cinta(paquete=PAQUETE_6, paquete_caida=PAQUETE_6_CAIDA,referencia=(106, 28),  numero=4, direccion=False)
+cinta9 = Cinta(paquete=PAQUETE_5, paquete_caida=None,            referencia=(155, 28),  numero=4, direccion=False)
+cinta8 = Cinta(paquete=PAQUETE_5, paquete_caida=PAQUETE_5_CAIDA, referencia=(126, 47),  numero=4, direccion=True)
+cinta7 = Cinta(paquete=PAQUETE_4, paquete_caida=None,            referencia=(77,  46),  numero=4, direccion=True)
+cinta6 = Cinta(paquete=PAQUETE_4, paquete_caida=PAQUETE_4_CAIDA, referencia=(106, 65),  numero=4, direccion=False)
+cinta5 = Cinta(paquete=PAQUETE_3, paquete_caida=None,            referencia=(155, 67),  numero=4, direccion=False)
+cinta4 = Cinta(paquete=PAQUETE_3, paquete_caida=PAQUETE_3_CAIDA, referencia=(126, 86),  numero=4, direccion=True)
+cinta3 = Cinta(paquete=PAQUETE_2, paquete_caida=None,            referencia=(77,  86),  numero=4, direccion=True)
 cinta2 = Cinta(paquete=PAQUETE_2, paquete_caida=PAQUETE_2_CAIDA, referencia=(106, 105), numero=4, direccion=False)
 cinta1 = Cinta(paquete=PAQUETE_1, paquete_caida=None,            referencia=(154, 108), numero=4, direccion=False, factor=2)
 cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217, 108), numero=3, direccion=False)
@@ -113,7 +134,7 @@ cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217
 cinta0.añadir_paquete()
 cinta1.añadir_paquete()
 
-cintas = [cinta0, cinta1, cinta2]
+cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
 class Partida:
     posiciones_mario: list[tuple[int, int]]
