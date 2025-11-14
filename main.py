@@ -1,5 +1,4 @@
 import random
-from typing import Self
 import pyxel
 
 class Imagen:
@@ -48,6 +47,9 @@ class Estado:
     def draw(self):
         self.imagen.draw(self.posicion)
 
+# TODO: hay que cambiar la manera en la que se especifica la velocidad, es decir, seleccionar una velocidad base por defecto y poder
+# especificar la velocidad con un factor: 1, 1.5, 2
+# Solo hay que multiplicar por un float la constante de velocidad.
 class Cinta:
     paquetes: list[int]
     estados: list[Estado]
