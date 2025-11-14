@@ -47,17 +47,14 @@ class Estado:
     def draw(self):
         self.imagen.draw(self.posicion)
 
-# TODO: hay que cambiar la manera en la que se especifica la velocidad, es decir, seleccionar una velocidad base por defecto y poder
-# especificar la velocidad con un factor: 1, 1.5, 2
-# Solo hay que multiplicar por un float la constante de velocidad.
 class Cinta:
     paquetes: list[int]
     estados: list[Estado]
-    velocidad: int
+    velocidad: float
     frame: int
-    def __init__(self, paquete: Imagen, paquete_caida: Imagen | None, referencia: tuple[int, int], numero: int, direccion: bool, velocidad: int = 20):
+    def __init__(self, paquete: Imagen, paquete_caida: Imagen | None, referencia: tuple[int, int], numero: int, direccion: bool, factor: float = 1):
         self.paquetes = []
-        self.velocidad = velocidad
+        self.velocidad = 20 / factor
         self.estados = [Estado(paquete, referencia)]
         self.frame = 0
 
@@ -110,7 +107,7 @@ PAQUETE_2 = Imagen(2, (109, 113), (9, 7))
 PAQUETE_2_CAIDA = Imagen(2, (75, 114), (10, 10))
 
 cinta2 = Cinta(paquete=PAQUETE_2, paquete_caida=PAQUETE_2_CAIDA, referencia=(106, 105), numero=4, direccion=False)
-cinta1 = Cinta(paquete=PAQUETE_1, paquete_caida=None,            referencia=(154, 108), numero=4, direccion=False, velocidad=10)
+cinta1 = Cinta(paquete=PAQUETE_1, paquete_caida=None,            referencia=(154, 108), numero=4, direccion=False, factor=2)
 cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217, 108), numero=3, direccion=False)
 
 cinta0.añadir_paquete()
