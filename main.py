@@ -137,21 +137,19 @@ cinta1 = Cinta(paquete=PAQUETE_1, paquete_caida=None,            referencia=(154
 cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217, 108), numero=3, direccion=False)
 
 cinta0.añadir_paquete()
-# cinta1.añadir_paquete()
+cinta1.añadir_paquete()
 
 cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
 class Partida:
-    posiciones_mario: list[tuple[int, int]]
-    posiciones_luigi: list[tuple[int, int]]
     mapa: Imagen
     mario: Jugador
+    luigi: Jugador
     dificultad: int
     def __init__(self, dificultad: int):
-        self.posiciones_mario = [(173,103), (173, 68), (173, 28)]
-        self.posiciones_luigi = [(55,96), (55,60), (55,22)]
         self.mapa = Imagen(1, (0, 0), (240, 136))
-        self.mario = Jugador(self.posiciones_mario, MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.mario = Jugador([(173,103), (173, 68), (173, 28)], MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.luigi = Jugador([(55,86), (55,50), (55,12)], MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
         self.dificultad = dificultad
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
@@ -160,6 +158,7 @@ class Partida:
 
     def update(self):
         self.mario.update()
+        self.luigi.update()
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
@@ -175,7 +174,8 @@ class Partida:
                         pyxel.quit()
                 elif resto == 2: 
                     posicion = (i + 1) % 3
-                    print('izquierda', posicion)
+                    if self.luigi.posicion != posicion:
+                        pyxel.quit()
 
         for i in salidas:
             if i + 1 < len(cintas):
@@ -187,6 +187,7 @@ class Partida:
             cinta.draw()
         self.mapa.draw((0, 0))
         self.mario.draw()
+        self.luigi.draw()
 
 if __name__ == '__main__':
     _ = Partida(0)
