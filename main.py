@@ -148,7 +148,6 @@ class Partida:
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador(self.posiciones_mario, MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
         self.dificultad = dificultad
-        # self.velocidad = 10
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
         pyxel.load('my_resource.pyxres')
@@ -164,27 +163,17 @@ class Partida:
             salida = cinta.avanzar()
             if salida:
                 salidas.append(i)
+            # Hay que comprobar si la cinta puede dejar caer un paquete y por
+            # qué lado lo va a hacer. Si la cinta es par, el de la derecha
+            # tiene que recoger el paquete. Si es impar le corresponde al de la
+            # izquierda. También hay que sacar la posición vertical a través de
+            # variables para ahorranos 3 condicionales extra. Si es por la
+            # derecha, cinta % 3. Si es por la izquierda, cinta + 1 % 3.
 
         for i in salidas:
             if i + 1 < len(cintas):
                 cintas[i + 1].añadir_paquete()
  
-        # self.frame += 1
-        # cinta: Cinta | None = cinta0
-        #
-        # velocidades = [[self.velocidad] * 3, 
-        #              [self.velocidad, self.velocidad * 1.5, self.velocidad * 1.5],
-        #              [self.velocidad, self.velocidad * 1.5, self.velocidad * 2],
-        #              [self.velocidad, self.velocidad * random.randrange(1,2), self.velocidad * random.randrange(1,2)]]
-        # velocidad = velocidades[self.dificultad]
-        #
-        # num_cinta = 0
-        # while cinta != None:
-        #     if self.frame % velocidad[num_cinta % 2] == 0:
-        #         cinta.paso()
-        #     cinta = cinta.siguiente
-        #     num_cinta += 1
-
     def draw(self):
         pyxel.cls(7)
         for cinta in cintas:
