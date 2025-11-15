@@ -37,7 +37,7 @@ class Jugador:
         x, y = self.posiciones[self.posicion]
         self.imagen.draw((x, y))
 
-class Estado:
+class Posicion:
     imagen: Imagen
     posicion: tuple[int, int]
     def __init__(self, imagen: Imagen, posicion: tuple[int, int]):
@@ -49,13 +49,13 @@ class Estado:
 
 class Cinta:
     paquetes: list[int]
-    estados: list[Estado]
+    estados: list[Posicion]
     velocidad: float
     frame: int
     def __init__(self, paquete: Imagen, paquete_caida: Imagen | None, referencia: tuple[int, int], numero: int, direccion: bool, factor: float = 1):
         self.paquetes = []
         self.velocidad = 20 / factor
-        self.estados = [Estado(paquete, referencia)]
+        self.estados = [Posicion(paquete, referencia)]
         self.frame = 0
 
         if paquete_caida != None:
@@ -64,11 +64,11 @@ class Cinta:
         desplazamiento = 11 if direccion else -11
         for _ in range(numero - 1):
             x, y = self.estados[-1].posicion
-            self.estados.append(Estado(paquete, (x + desplazamiento, y)))
+            self.estados.append(Posicion(paquete, (x + desplazamiento, y)))
 
         if paquete_caida != None:
             x, y = self.estados[-1].posicion
-            self.estados.append(Estado(paquete_caida, (x + desplazamiento, y)))
+            self.estados.append(Posicion(paquete_caida, (x + desplazamiento, y)))
 
     def añadir_paquete(self):
         self.paquetes.append(0)
@@ -77,6 +77,11 @@ class Cinta:
         for paquete in self.paquetes:
             if paquete < len(self.estados):
                 self.estados[paquete].draw()
+
+    def caida(self):
+        if len(self.paquetes) > 0 and self.paquetes[0] == len(self.estados) - 1:
+            return True
+        return False
 
     def avanzar(self):
         self.frame += 1
@@ -132,7 +137,7 @@ cinta1 = Cinta(paquete=PAQUETE_1, paquete_caida=None,            referencia=(154
 cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217, 108), numero=3, direccion=False)
 
 cinta0.añadir_paquete()
-cinta1.añadir_paquete()
+# cinta1.añadir_paquete()
 
 cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
@@ -163,12 +168,14 @@ class Partida:
             salida = cinta.avanzar()
             if salida:
                 salidas.append(i)
-            # Hay que comprobar si la cinta puede dejar caer un paquete y por
-            # qué lado lo va a hacer. Si la cinta es par, el de la derecha
-            # tiene que recoger el paquete. Si es impar le corresponde al de la
-            # izquierda. También hay que sacar la posición vertical a través de
-            # variables para ahorranos 3 condicionales extra. Si es por la
-            # derecha, cinta % 3. Si es por la izquierda, cinta + 1 % 3.
+                resto = i % 4
+                if resto == 0:
+                    posicion = i % 3
+                    if self.mario.posicion != posicion:
+                        pyxel.quit()
+                elif resto == 2: 
+                    posicion = (i + 1) % 3
+                    print('izquierda', posicion)
 
         for i in salidas:
             if i + 1 < len(cintas):
