@@ -1,5 +1,4 @@
 import random
-from typing import Self
 import pyxel
 
 class Imagen:
@@ -38,7 +37,7 @@ class Jugador:
         x, y = self.posiciones[self.posicion]
         self.imagen.draw((x, y))
 
-class Estado:
+class Posicion:
     imagen: Imagen
     posicion: tuple[int, int]
     def __init__(self, imagen: Imagen, posicion: tuple[int, int]):
@@ -50,12 +49,26 @@ class Estado:
 
 class Cinta:
     paquetes: list[int]
-    estados: list[Estado]
-    siguiente: Self | None
-    def __init__(self, estados: list[Estado], siguiente: Self | None = None):
+    estados: list[Posicion]
+    velocidad: float
+    frame: int
+    def __init__(self, paquete: Imagen, paquete_caida: Imagen | None, referencia: tuple[int, int], numero: int, direccion: bool, factor: float = 1):
         self.paquetes = []
-        self.estados = estados
-        self.siguiente = siguiente
+        self.velocidad = 20 / factor
+        self.estados = [Posicion(paquete, referencia)]
+        self.frame = 0
+
+        if paquete_caida != None:
+            numero -= 1
+
+        desplazamiento = 11 if direccion else -11
+        for _ in range(numero - 1):
+            x, y = self.estados[-1].posicion
+            self.estados.append(Posicion(paquete, (x + desplazamiento, y)))
+
+        if paquete_caida != None:
+            x, y = self.estados[-1].posicion
+            self.estados.append(Posicion(paquete_caida, (x + desplazamiento, y)))
 
     def añadir_paquete(self):
         self.paquetes.append(0)
@@ -65,62 +78,79 @@ class Cinta:
             if paquete < len(self.estados):
                 self.estados[paquete].draw()
 
-    def paso(self):
-        for i, paquete in enumerate(self.paquetes):
-            self.paquetes[i] += 1
-            if paquete >= len(self.estados):
-                del self.paquetes[i]
-                if self.siguiente != None:
-                    self.siguiente.añadir_paquete()
+    def caida(self):
+        if len(self.paquetes) > 0 and self.paquetes[0] == len(self.estados) - 1:
+            return True
+        return False
 
-PAQUETE_0_LARGO = Imagen(2, (0, 152), (9, 4))
-PAQUETE_2 = Imagen(2, (0, 152), (3, 4))
-PAQUETE_3 = Imagen(2, (9, 152), (9, 9))
-PAQUETE_4 = Imagen(2, (151, 94), (9, 7))
-PAQUETE_5 = Imagen(2, (152, 94), (8, 7))
-PAQUETE_6 = Imagen(0, (110, 86), (4, 7))
-PAQUETE_7 = Imagen(0, (99, 86), (9, 7))
+    def avanzar(self):
+        self.frame += 1
+        if self.frame < self.velocidad:
+            return False
+        self.frame = 0
+
+        salida = False
+        nuevos: list[int] = []
+
+        for paquete in self.paquetes:
+            nuevo = paquete + 1
+            if nuevo < len(self.estados):
+                nuevos.append(nuevo)
+            else:
+                salida = True
+
+        self.paquetes = nuevos
+        return salida
 
 MARIO_1_1 = Imagen(2, (18, 152), (27, 26))
 MARIO_1_2 = Imagen(2, (45, 152), (27, 26))
 
-cinta3 = Cinta([
-        Estado(PAQUETE_6, (110, 86)),
-        Estado(PAQUETE_7, (99, 86)),
-        Estado(PAQUETE_7, (88, 86)),
-        Estado(PAQUETE_7, (77, 86)),
-    ])
-cinta2 = Cinta([
-        Estado(PAQUETE_4, (148, 86)),
-        Estado(PAQUETE_4, (137, 86)),
-        Estado(PAQUETE_5, (127, 86)),
-    ], cinta3)
-cinta1 = Cinta([
-        Estado(PAQUETE_0_LARGO, (154, 108)),
-        Estado(PAQUETE_0_LARGO, (143, 108)),
-        Estado(PAQUETE_0_LARGO, (132, 108)),
-        Estado(PAQUETE_2, (127, 108)),
-    ], cinta2)
-cinta0 = Cinta([
-        Estado(PAQUETE_0_LARGO, (217, 108)),
-        Estado(PAQUETE_0_LARGO, (206, 108)),
-        Estado(PAQUETE_3, (195, 108)),
-    ], cinta1)
+PAQUETE_1 = Imagen(2, (135, 116), (9, 4))
+PAQUETE_1_CAIDA = Imagen(2, (9, 152), (9, 9))
+
+PAQUETE_2 = Imagen(2, (109, 113), (9, 7))
+PAQUETE_2_CAIDA = Imagen(2, (75, 114), (10, 10))
+
+PAQUETE_3 = Imagen(2, (151, 94), (9, 7))
+PAQUETE_3_CAIDA = Imagen(2, (162, 94), (10, 11))
+
+PAQUETE_4 = Imagen(2, (109, 73), (9, 9))
+PAQUETE_4_CAIDA = Imagen(2, (0, 164), (11, 12))
+
+PAQUETE_5 = Imagen(2, (136, 36), (9, 9))
+PAQUETE_5_CAIDA = Imagen(2, (0, 184), (12, 12))
+
+PAQUETE_6 = Imagen(2, (109, 36), (9, 9))
+PAQUETE_6_CAIDA = Imagen(2, (16, 184), (13, 13))
+
+# TODO: corrección de caida
+cinta10 = Cinta(paquete=PAQUETE_6, paquete_caida=PAQUETE_6_CAIDA,referencia=(106, 28),  numero=4, direccion=False)
+cinta9 = Cinta(paquete=PAQUETE_5, paquete_caida=None,            referencia=(155, 28),  numero=4, direccion=False)
+cinta8 = Cinta(paquete=PAQUETE_5, paquete_caida=PAQUETE_5_CAIDA, referencia=(126, 47),  numero=4, direccion=True)
+cinta7 = Cinta(paquete=PAQUETE_4, paquete_caida=None,            referencia=(77,  46),  numero=4, direccion=True)
+cinta6 = Cinta(paquete=PAQUETE_4, paquete_caida=PAQUETE_4_CAIDA, referencia=(106, 65),  numero=4, direccion=False)
+cinta5 = Cinta(paquete=PAQUETE_3, paquete_caida=None,            referencia=(155, 67),  numero=4, direccion=False)
+cinta4 = Cinta(paquete=PAQUETE_3, paquete_caida=PAQUETE_3_CAIDA, referencia=(126, 86),  numero=4, direccion=True)
+cinta3 = Cinta(paquete=PAQUETE_2, paquete_caida=None,            referencia=(77,  86),  numero=4, direccion=True)
+cinta2 = Cinta(paquete=PAQUETE_2, paquete_caida=PAQUETE_2_CAIDA, referencia=(106, 105), numero=4, direccion=False)
+cinta1 = Cinta(paquete=PAQUETE_1, paquete_caida=None,            referencia=(154, 108), numero=4, direccion=False, factor=2)
+cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217, 108), numero=3, direccion=False)
+
 cinta0.añadir_paquete()
+cinta1.añadir_paquete()
+
+cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
 class Partida:
-    posiciones_mario: list[tuple[int, int]]
-    posiciones_luigi: list[tuple[int, int]]
     mapa: Imagen
     mario: Jugador
-    def __init__(self):
-        self.posiciones_mario = [(173,103), (173, 68), (173, 28)]
-        self.posiciones_luigi = [(55,96), (55,60), (55,22)]
+    luigi: Jugador
+    dificultad: int
+    def __init__(self, dificultad: int):
         self.mapa = Imagen(1, (0, 0), (240, 136))
-        self.mario = Jugador(self.posiciones_mario, MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
-        self.frame = 0
-        self.dificultad = 3
-        self.velocidad = 10
+        self.mario = Jugador([(173,103), (173, 68), (173, 28)], MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.luigi = Jugador([(55,86), (55,50), (55,12)], MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
+        self.dificultad = dificultad
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
         pyxel.load('my_resource.pyxres')
@@ -128,37 +158,36 @@ class Partida:
 
     def update(self):
         self.mario.update()
+        self.luigi.update()
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
+
+        salidas: list[int] = []
+        for i, cinta in enumerate(cintas):
+            salida = cinta.avanzar()
+            if salida:
+                salidas.append(i)
+                resto = i % 4
+                if resto == 0:
+                    posicion = i % 3
+                    if self.mario.posicion != posicion:
+                        pyxel.quit()
+                elif resto == 2: 
+                    posicion = (i + 1) % 3
+                    if self.luigi.posicion != posicion:
+                        pyxel.quit()
+
+        for i in salidas:
+            if i + 1 < len(cintas):
+                cintas[i + 1].añadir_paquete()
  
-        self.frame += 1
-        cinta: Cinta | None = cinta0
-
-        num_cinta = 0
-        velocidades = [[self.velocidad] * 3, 
-                     [self.velocidad, self.velocidad * 1.5, self.velocidad * 1.5],
-                     [self.velocidad, self.velocidad * 1.5, self.velocidad * 2],
-                     [self.velocidad, self.velocidad * random.randrange(1,2), self.velocidad * random.randrange(1,2)]]
-
-        while cinta != None:
-            if num_cinta == 0:
-                velocidad = velocidades[self.dificultad][0]
-            else:
-                velocidad = velocidades[self.dificultad][num_cinta % 2]
-
-            if self.frame % velocidad == 0:
-                cinta.paso()
-            cinta = cinta.siguiente
-            num_cinta += 1
-
     def draw(self):
         pyxel.cls(7)
+        for cinta in cintas:
+            cinta.draw()
         self.mapa.draw((0, 0))
         self.mario.draw()
-        cinta: Cinta | None = cinta0
-        while cinta != None:
-            cinta.draw()
-            cinta = cinta.siguiente
+        self.luigi.draw()
 
 if __name__ == '__main__':
-    _ = Partida()
+    _ = Partida(0)
