@@ -180,7 +180,7 @@ class Partida:
         for i in salidas:
             if i + 1 < len(cintas):
                 cintas[i + 1].añadir_paquete()
- 
+
     def draw(self):
         pyxel.cls(7)
         for cinta in cintas:
