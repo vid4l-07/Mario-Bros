@@ -16,6 +16,50 @@ class Imagen:
         x, y = posicion
         pyxel.blt(x, y, self.imagen, self.x, self.y, self.ancho, self.alto, colkey=7)
 
+class Seleccion:
+    def __init__(self, posiciones: list[tuple[int, int]]) -> None:
+        self.posiciones = posiciones
+        self.posicion = 0
+        self.arriba, self.abajo = (pyxel.KEY_UP, pyxel.KEY_DOWN)
+
+    def update(self) -> None:
+        if pyxel.btnp(self.abajo):
+            self.posicion = min(self.posicion + 1, len(self.posiciones) - 1)
+
+        elif pyxel.btnp(self.arriba):
+            self.posicion = max(self.posicion - 1, 0)
+
+    def draw(self) -> None:
+        x, y = self.posiciones[self.posicion]
+        pyxel.text(x,y, ">", 7)  # Blanco
+
+
+class Menu:
+    def __init__(self) -> None:
+        self.posiciones = ([(50,30),(50,40),(50,50),(50,60)])
+        self.seleccion = Seleccion(self.posiciones)
+        self.eleccion = 0
+        self.visible = True
+
+    def toggle(self):
+        if self.visible:
+            self.visible = False
+        else:
+            self.visible = True
+
+    def update(self):
+        if pyxel.btnp(pyxel.KEY_RETURN):
+            self.eleccion = self.seleccion.posicion
+            self.toggle()
+        self.seleccion.update()
+
+    def draw(self):
+        pyxel.text(self.posiciones[0][0] + 5, self.posiciones[0][1], "Facil", 7)  # Blanco
+        pyxel.text(self.posiciones[1][0] + 5, self.posiciones[1][1], "Medio", 7)
+        pyxel.text(self.posiciones[2][0] + 5, self.posiciones[2][1], "Extremo", 7)
+        pyxel.text(self.posiciones[3][0] + 5, self.posiciones[3][1], "Crazy", 7)
+        self.seleccion.draw()
+
 class Jugador:
     posiciones: list[tuple[int, int]]
     posicion: int
@@ -72,6 +116,13 @@ class Cinta:
 
     def añadir_paquete(self):
         self.paquetes.append(0)
+        print(self.velocidad)
+
+    def eliminar_paquetes(self):
+        self.paquetes.clear()
+
+    def actualizar_velocidad(self, factor):
+        self.velocidad = 20 / factor
 
     def draw(self):
         for paquete in self.paquetes:
@@ -103,7 +154,7 @@ class Cinta:
         return salida
 
 MARIO_1_1 = Imagen(2, (18, 152), (27, 26))
-MARIO_1_2 = Imagen(2, (45, 152), (27, 26))
+MARIO_1_2 = Imagen(2, (44, 152), (27, 26))
 
 PAQUETE_1 = Imagen(2, (135, 116), (9, 4))
 PAQUETE_1_CAIDA = Imagen(2, (9, 152), (9, 9))
@@ -136,27 +187,46 @@ cinta2 = Cinta(paquete=PAQUETE_2, paquete_caida=PAQUETE_2_CAIDA, referencia=(106
 cinta1 = Cinta(paquete=PAQUETE_1, paquete_caida=None,            referencia=(154, 108), numero=4, direccion=False, factor=2)
 cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217, 108), numero=3, direccion=False)
 
-cinta0.añadir_paquete()
-cinta1.añadir_paquete()
-
 cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
 class Partida:
     mapa: Imagen
     mario: Jugador
     luigi: Jugador
-    dificultad: int
-    def __init__(self, dificultad: int):
+    def __init__(self):
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador([(173,103), (173, 68), (173, 28)], MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
         self.luigi = Jugador([(55,86), (55,50), (55,12)], MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
-        self.dificultad = dificultad
+        self.menu = Menu()
+        self.dificultad = 5
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
         pyxel.load('my_resource.pyxres')
         pyxel.run(self.update, self.draw)
 
+    def aplicar_dificultad(self,dificultad):
+        print(dificultad)
+        for i in range(len(cintas)):
+            dificultades = [(1,1,1) , (1,1,1.5) , (1,1.5,2) , (1,random.randint(1,2),random.randint(1,2))]
+            cintas[i].eliminar_paquetes()
+            if i == 0:
+                cintas[i].actualizar_velocidad(dificultades[dificultad][0])
+            elif i % 2 == 0:
+                cintas[i].actualizar_velocidad(dificultades[dificultad][1])
+            elif i % 2 != 0:
+                cintas[i].actualizar_velocidad(dificultades[dificultad][2])
+        cinta0.añadir_paquete()
+
     def update(self):
+        if pyxel.btnp(pyxel.KEY_M):
+            self.menu.toggle()
+        if self.menu.visible:
+            self.menu.update()
+            return
+        if self.menu.eleccion != self.dificultad:
+            self.dificultad = self.menu.eleccion
+            self.aplicar_dificultad(self.dificultad)
+
         self.mario.update()
         self.luigi.update()
         if pyxel.btnp(pyxel.KEY_Q):
@@ -188,6 +258,9 @@ class Partida:
         self.mapa.draw((0, 0))
         self.mario.draw()
         self.luigi.draw()
+        if self.menu.visible:
+            pyxel.cls(0)
+            self.menu.draw()
 
 if __name__ == '__main__':
-    _ = Partida(0)
+    _ = Partida()
