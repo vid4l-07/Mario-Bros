@@ -3,13 +3,13 @@
 
 ### TO-DO
 Principal:
- [ ] Terminar la dificultad
- [ ] Animaciones de los personajes
- [ ] Jefes
- [ ] Puntos
- [ ] Camión
+ - [ ] Terminar la dificultad
+ - [ ] Animaciones de los personajes
+ - [ ] Jefes
+ - [ ] Puntos
+ - [ ] Camión
 
 Secundario:
- [ ] Simplificar la clase Cinta
- [ ] Simplificar la clase Partida
- [ ] Limpiar el menu
+ - [ ] Simplificar la clase Cinta
+ - [ ] Simplificar la clase Partida
+ - [ ] Limpiar el menu
