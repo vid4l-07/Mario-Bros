@@ -92,10 +92,20 @@ class Posicion:
         self.imagen.draw(self.posicion)
 
 class Cinta:
+    # TODO: A lo mejor se puede simplificar. En lugar de tener una lista de
+    # estados hacer un movimiento continuo. Una sola imagen de paquete y una
+    # lista de paquetes. Lo malo es que hay que guardar la posición
+    # independiente de cada paquete. Eso elimina el efecto de pasos (versión
+    # antigua del juego).
+
+    # Si decidimos dejar el movimiento por pasos también lo podemos simplificar
+    # de otra forma.
+
     paquetes: list[int]
     estados: list[Posicion]
     velocidad: float
     frame: int
+
     def __init__(self, paquete: Imagen, paquete_caida: Imagen | None, referencia: tuple[int, int], numero: int, direccion: bool, factor: float = 1):
         self.paquetes = []
         self.velocidad = 20 / factor
@@ -121,7 +131,7 @@ class Cinta:
     def eliminar_paquetes(self):
         self.paquetes.clear()
 
-    def actualizar_velocidad(self, factor):
+    def actualizar_velocidad(self, factor: float):
         self.velocidad = 20 / factor
 
     def draw(self):
