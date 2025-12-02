@@ -16,49 +16,39 @@ class Imagen:
         x, y = posicion
         pyxel.blt(x, y, self.imagen, self.x, self.y, self.ancho, self.alto, colkey=7)
 
-class Seleccion:
-    def __init__(self, posiciones: list[tuple[int, int]]) -> None:
-        self.posiciones = posiciones
-        self.posicion = 0
-        self.arriba, self.abajo = (pyxel.KEY_UP, pyxel.KEY_DOWN)
-
-    def update(self) -> None:
-        if pyxel.btnp(self.abajo):
-            self.posicion = min(self.posicion + 1, len(self.posiciones) - 1)
-
-        elif pyxel.btnp(self.arriba):
-            self.posicion = max(self.posicion - 1, 0)
-
-    def draw(self) -> None:
-        x, y = self.posiciones[self.posicion]
-        pyxel.text(x,y, ">", 7)  # Blanco
-
-
 class Menu:
-    def __init__(self) -> None:
-        self.posiciones = ([(50,30),(50,40),(50,50),(50,60)])
-        self.seleccion = Seleccion(self.posiciones)
-        self.eleccion = 0
+    opciones: list[str]
+    seleccion: int
+    visible: bool
+
+    def __init__(self, opciones: list[str]):
+        self.opciones = opciones
+        self.seleccion = 0
         self.visible = True
 
-    def toggle(self):
-        if self.visible:
-            self.visible = False
-        else:
-            self.visible = True
-
     def update(self):
+        if pyxel.btnp(pyxel.KEY_M):
+            self.visible = not self.visible
+
+        if pyxel.btnp(pyxel.KEY_DOWN):
+            self.seleccion = min(self.seleccion + 1, len(self.opciones) - 1)
+
+        if pyxel.btnp(pyxel.KEY_UP):
+            self.seleccion = max(self.seleccion - 1, 0)
+
         if pyxel.btnp(pyxel.KEY_RETURN):
-            self.eleccion = self.seleccion.posicion
-            self.toggle()
-        self.seleccion.update()
+            self.visible = False
 
     def draw(self):
-        pyxel.text(self.posiciones[0][0] + 5, self.posiciones[0][1], "Facil", 7)  # Blanco
-        pyxel.text(self.posiciones[1][0] + 5, self.posiciones[1][1], "Medio", 7)
-        pyxel.text(self.posiciones[2][0] + 5, self.posiciones[2][1], "Extremo", 7)
-        pyxel.text(self.posiciones[3][0] + 5, self.posiciones[3][1], "Crazy", 7)
-        self.seleccion.draw()
+        if not self.visible:
+            return
+
+        pyxel.cls(0)
+
+        for i, opcion in enumerate(self.opciones):
+            pyxel.text(10, 10 + (10 * i), opcion, 1 if i == self.seleccion else 7)
+
+        pyxel.text(50, 10 + (10 * self.seleccion), '<', 1)
 
 class Jugador:
     posiciones: list[tuple[int, int]]
@@ -199,78 +189,78 @@ cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217
 
 cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
+# TODO: Podríamos hacer que la clase Menu sea capaz de crear partidas?
 class Partida:
     mapa: Imagen
     mario: Jugador
     luigi: Jugador
+    menu: Menu
+
     def __init__(self):
+        MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
+        LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
+
         self.mapa = Imagen(1, (0, 0), (240, 136))
-        self.mario = Jugador([(173,103), (173, 68), (173, 28)], MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
-        self.luigi = Jugador([(55,86), (55,50), (55,12)], MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
-        self.menu = Menu()
-        self.dificultad = 5
+        self.mario = Jugador(MARIO_POSICIONES, MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.luigi = Jugador(LUIGI_POSICIONES, MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
+        self.menu = Menu(['Facil', 'Normal', 'Dificil', 'Crazy'])
 
         pyxel.init(self.mapa.ancho, self.mapa.alto)
         pyxel.load('my_resource.pyxres')
         pyxel.run(self.update, self.draw)
 
-    def aplicar_dificultad(self,dificultad):
-        print(dificultad)
-        for i in range(len(cintas)):
-            dificultades = [(1,1,1) , (1,1,1.5) , (1,1.5,2) , (1,random.randint(1,2),random.randint(1,2))]
-            cintas[i].eliminar_paquetes()
-            if i == 0:
-                cintas[i].actualizar_velocidad(dificultades[dificultad][0])
-            elif i % 2 == 0:
-                cintas[i].actualizar_velocidad(dificultades[dificultad][1])
-            elif i % 2 != 0:
-                cintas[i].actualizar_velocidad(dificultades[dificultad][2])
-        cinta0.añadir_paquete()
+    # Esto comprueba si se cae un paquete
+    def fall_handler(self, numero_cinta: int):
+        resto = numero_cinta % 4
+        posicion = None
+
+        if resto == 0:
+            posicion = numero_cinta % 3
+        elif resto == 2:
+            posicion = (numero_cinta + 1) % 3
+
+        # TODO: Creo que se puede simplificar más con un OR
+        if posicion is not None:
+            jugador = self.mario if resto == 0 else self.luigi
+            if jugador.posicion != posicion:
+                pyxel.quit()
 
     def update(self):
-        if pyxel.btnp(pyxel.KEY_M):
-            self.menu.toggle()
-        if self.menu.visible:
-            self.menu.update()
-            return
-        if self.menu.eleccion != self.dificultad:
-            self.dificultad = self.menu.eleccion
-            self.aplicar_dificultad(self.dificultad)
-
-        self.mario.update()
-        self.luigi.update()
+        # Se puede cerrar el juego en cualquier momento
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
+        # Si se está usando el menú no se actualiza el estado del resto del juego
+        self.menu.update()
+        if self.menu.visible:
+            return
+
+        # Actualizamos el estado de los jugadores
+        self.mario.update()
+        self.luigi.update()
+
+        # Las cintas avanzan
         salidas: list[int] = []
-        for i, cinta in enumerate(cintas):
+        for numero_cinta, cinta in enumerate(cintas):
             salida = cinta.avanzar()
             if salida:
-                salidas.append(i)
-                resto = i % 4
-                if resto == 0:
-                    posicion = i % 3
-                    if self.mario.posicion != posicion:
-                        pyxel.quit()
-                elif resto == 2: 
-                    posicion = (i + 1) % 3
-                    if self.luigi.posicion != posicion:
-                        pyxel.quit()
+                salidas.append(numero_cinta)
+                self.fall_handler(numero_cinta)
 
-        for i in salidas:
-            if i + 1 < len(cintas):
-                cintas[i + 1].añadir_paquete()
+        # Se mueven los paquetes de una cinta a otra
+        for numero_cinta in salidas:
+            if numero_cinta + 1 < len(cintas):
+                cintas[numero_cinta + 1].añadir_paquete()
 
     def draw(self):
+        # El orden es importante
         pyxel.cls(7)
         for cinta in cintas:
             cinta.draw()
         self.mapa.draw((0, 0))
         self.mario.draw()
         self.luigi.draw()
-        if self.menu.visible:
-            pyxel.cls(0)
-            self.menu.draw()
+        self.menu.draw()
 
 if __name__ == '__main__':
     _ = Partida()
