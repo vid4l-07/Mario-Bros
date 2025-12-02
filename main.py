@@ -185,13 +185,17 @@ cinta0 = Cinta(paquete=PAQUETE_1, paquete_caida=PAQUETE_1_CAIDA, referencia=(217
 
 cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
-# TODO: Podríamos hacer que la clase Menu sea capaz de crear partidas?
 class Partida:
     mapa: Imagen
     mario: Jugador
     luigi: Jugador
 
     def __init__(self, dificultad: int):
+        # TODO: Hay que aplicar la dificultad aquí. Cuando se crea la partida,
+        # se configura todo según la dificultad. Es por eso que las cintas
+        # deben crearse aquí también. Pero deberíamos simplificar la clase
+        # Cinta primero.
+
         MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
 
@@ -241,7 +245,7 @@ class Partida:
         self.luigi.draw()
 
 
-# TODO: El tamaño del mapa tiene que ser una constante
+# TODO: El tamaño del mapa debería ser una constante
 class Juego:
     menu: Menu
     partida: None | Partida
@@ -278,5 +282,4 @@ class Juego:
         self.menu.draw()
 
 if __name__ == '__main__':
-    # _ = Partida()
     _ = Juego()
