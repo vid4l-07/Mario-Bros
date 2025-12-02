@@ -74,16 +74,6 @@ class Jugador:
         x, y = self.posiciones[self.posicion]
         self.imagen.draw((x, y))
 
-class Posicion:
-    imagen: Imagen
-    posicion: tuple[int, int]
-    def __init__(self, imagen: Imagen, posicion: tuple[int, int]):
-        self.imagen = imagen
-        self.posicion = posicion
-
-    def draw(self):
-        self.imagen.draw(self.posicion)
-
 # TODO: Imagen de caida
 class Cinta:
     imagen_paquete: Imagen
@@ -105,7 +95,6 @@ class Cinta:
 
     def añadir_paquete(self):
         self.paquetes.append(0)
-        print(self.velocidad)
 
     def eliminar_paquetes(self):
         self.paquetes.clear()
@@ -176,12 +165,18 @@ class Partida:
     mapa: Imagen
     mario: Jugador
     luigi: Jugador
+    cintas: list[Cinta]
 
     def __init__(self, dificultad: int):
         # TODO: Hay que aplicar la dificultad aquí. Cuando se crea la partida,
         # se configura todo según la dificultad. Es por eso que las cintas
-        # deben crearse aquí también. Pero deberíamos simplificar la clase
-        # Cinta primero.
+        # deben crearse aquí también.
+
+        # No se a qué se refiere el documento con cintas 0-7 porque la siete
+        # acaba en el lado de Mario.
+
+        if dificultad == 0:
+            self.cintas = cintas[:7]
 
         MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
@@ -212,7 +207,7 @@ class Partida:
 
         # Las cintas avanzan
         salidas: list[int] = []
-        for numero_cinta, cinta in enumerate(cintas):
+        for numero_cinta, cinta in enumerate(self.cintas):
             salida = cinta.avanzar()
             if salida:
                 salidas.append(numero_cinta)
@@ -220,12 +215,12 @@ class Partida:
 
         # Se mueven los paquetes de una cinta a otra
         for numero_cinta in salidas:
-            if numero_cinta + 1 < len(cintas):
-                cintas[numero_cinta + 1].añadir_paquete()
+            if numero_cinta + 1 < len(self.cintas):
+                self.cintas[numero_cinta + 1].añadir_paquete()
 
     def draw(self):
         # El orden es importante
-        for cinta in cintas:
+        for cinta in self.cintas:
             cinta.draw()
         self.mapa.draw((0, 0))
         self.mario.draw()
@@ -238,7 +233,7 @@ class Juego:
     partida: None | Partida
 
     def __init__(self):
-        self.menu = Menu(['Facil', 'Normal', 'Dificil', 'Crazy'])
+        self.menu = Menu(['Facil', 'Medio', 'Extremo', 'Crazy'])
 
         self.partida = None
 
