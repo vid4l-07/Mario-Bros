@@ -155,7 +155,7 @@ cinta5 = Cinta(PAQUETE_3, (155, 67),  4, -1)
 cinta4 = Cinta(PAQUETE_3, (126, 86),  4, 1)
 cinta3 = Cinta(PAQUETE_2, (77,  86),  4, 1)
 cinta2 = Cinta(PAQUETE_2, (106, 105), 4, -1)
-cinta1 = Cinta(PAQUETE_1, (154, 108), 4, -1, 2)
+cinta1 = Cinta(PAQUETE_1, (154, 108), 4, -1)
 cinta0 = Cinta(PAQUETE_1, (217, 108), 3, -1)
 
 cinta0.añadir_paquete()
@@ -177,6 +177,29 @@ class Partida:
 
         if dificultad == 0:
             self.cintas = cintas[:7]
+
+        elif dificultad == 1:
+            self.cintas = cintas[:7]
+            for cinta in self.cintas[1::2]:
+                cinta.actualizar_velocidad(1.5)
+
+        elif dificultad == 2:
+            self.cintas = cintas
+            for cinta in self.cintas[1::2]:
+                cinta.actualizar_velocidad(2)
+            for cinta in self.cintas[2::2]:
+                cinta.actualizar_velocidad(1.5)
+
+        elif dificultad == 3:
+            self.cintas = cintas[:7]
+            for cinta in self.cintas:
+                cinta.actualizar_velocidad(random.uniform(1, 2)) # no se si se refiere a (1 o 2) o también valores intermedios
+
+        # Limpiar las cintas
+        for cinta in self.cintas:
+            cinta.eliminar_paquetes()
+
+        self.cintas[0].añadir_paquete()
 
         MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
