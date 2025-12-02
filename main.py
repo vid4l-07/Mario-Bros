@@ -82,14 +82,7 @@ class Posicion:
         self.imagen.draw(self.posicion)
 
 class Cinta:
-    # TODO: A lo mejor se puede simplificar. En lugar de tener una lista de
-    # estados hacer un movimiento continuo. Una sola imagen de paquete y una
-    # lista de paquetes. Lo malo es que hay que guardar la posición
-    # independiente de cada paquete. Eso elimina el efecto de pasos (versión
-    # antigua del juego).
-
-    # Si decidimos dejar el movimiento por pasos también lo podemos simplificar
-    # de otra forma.
+    # TODO: Hay que simplificar mucho esta clase. No es necesario pero renta
 
     paquetes: list[int]
     estados: list[Posicion]
@@ -174,7 +167,7 @@ PAQUETE_5_CAIDA = Imagen(2, (0, 184), (12, 12))
 PAQUETE_6 = Imagen(2, (109, 36), (9, 9))
 PAQUETE_6_CAIDA = Imagen(2, (16, 184), (13, 13))
 
-# TODO: corrección de caida
+# Esto es una porquería
 cinta10 = Cinta(paquete=PAQUETE_6, paquete_caida=PAQUETE_6_CAIDA,referencia=(106, 28),  numero=4, direccion=False)
 cinta9 = Cinta(paquete=PAQUETE_5, paquete_caida=None,            referencia=(155, 28),  numero=4, direccion=False)
 cinta8 = Cinta(paquete=PAQUETE_5, paquete_caida=PAQUETE_5_CAIDA, referencia=(126, 47),  numero=4, direccion=True)
@@ -219,7 +212,6 @@ class Partida:
         elif resto == 2:
             posicion = (numero_cinta + 1) % 3
 
-        # TODO: Creo que se puede simplificar más con un OR
         if posicion is not None:
             jugador = self.mario if resto == 0 else self.luigi
             if jugador.posicion != posicion:
@@ -261,6 +253,9 @@ class Partida:
         self.mario.draw()
         self.luigi.draw()
         self.menu.draw()
+
+class Juego:
+    pass
 
 if __name__ == '__main__':
     _ = Partida()

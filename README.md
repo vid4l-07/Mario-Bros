@@ -11,5 +11,5 @@ Principal:
 
 Secundario:
  - [ ] Simplificar la clase Cinta
- - [ ] Simplificar la clase Partida
- - [ ] Limpiar el menu
+ - [x] Simplificar la clase Partida
+ - [x] Limpiar el menu
