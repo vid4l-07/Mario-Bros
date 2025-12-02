@@ -26,7 +26,7 @@ class Menu:
         self.seleccion = 0
         self.visible = True
 
-    def update(self):
+    def update(self) -> int | None:
         if pyxel.btnp(pyxel.KEY_M):
             self.visible = not self.visible
 
@@ -38,6 +38,9 @@ class Menu:
 
         if pyxel.btnp(pyxel.KEY_RETURN):
             self.visible = False
+            return self.seleccion
+
+        return None
 
     def draw(self):
         if not self.visible:
@@ -187,20 +190,14 @@ class Partida:
     mapa: Imagen
     mario: Jugador
     luigi: Jugador
-    menu: Menu
 
-    def __init__(self):
+    def __init__(self, dificultad: int):
         MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador(MARIO_POSICIONES, MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
         self.luigi = Jugador(LUIGI_POSICIONES, MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
-        self.menu = Menu(['Facil', 'Normal', 'Dificil', 'Crazy'])
-
-        pyxel.init(self.mapa.ancho, self.mapa.alto)
-        pyxel.load('my_resource.pyxres')
-        pyxel.run(self.update, self.draw)
 
     # Esto comprueba si se cae un paquete
     def fall_handler(self, numero_cinta: int):
@@ -218,15 +215,6 @@ class Partida:
                 pyxel.quit()
 
     def update(self):
-        # Se puede cerrar el juego en cualquier momento
-        if pyxel.btnp(pyxel.KEY_Q):
-            pyxel.quit()
-
-        # Si se está usando el menú no se actualiza el estado del resto del juego
-        self.menu.update()
-        if self.menu.visible:
-            return
-
         # Actualizamos el estado de los jugadores
         self.mario.update()
         self.luigi.update()
@@ -246,16 +234,49 @@ class Partida:
 
     def draw(self):
         # El orden es importante
-        pyxel.cls(7)
         for cinta in cintas:
             cinta.draw()
         self.mapa.draw((0, 0))
         self.mario.draw()
         self.luigi.draw()
+
+
+# TODO: El tamaño del mapa tiene que ser una constante
+class Juego:
+    menu: Menu
+    partida: None | Partida
+
+    def __init__(self):
+        self.menu = Menu(['Facil', 'Normal', 'Dificil', 'Crazy'])
+
+        self.partida = None
+
+        pyxel.init(240, 136)
+        pyxel.load('my_resource.pyxres')
+        pyxel.run(self.update, self.draw)
+
+    def update(self):
+        # Se puede cerrar el juego en cualquier momento
+        if pyxel.btnp(pyxel.KEY_Q):
+            pyxel.quit()
+
+        # Si se está usando el menú no se actualiza el estado del resto del juego
+        seleccion = self.menu.update()
+        if seleccion != None:
+            # Se crea una nueva partida con los valores de la nueva dificultad
+            self.partida = Partida(seleccion)
+        if self.menu.visible:
+            return
+
+        if self.partida != None:
+            self.partida.update()
+
+    def draw(self):
+        pyxel.cls(7)
+        if self.partida != None:
+            self.partida.draw()
         self.menu.draw()
 
-class Juego:
-    pass
-
 if __name__ == '__main__':
-    _ = Partida()
+    # _ = Partida()
+    _ = Juego()
