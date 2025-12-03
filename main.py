@@ -166,14 +166,11 @@ class Partida:
     mario: Jugador
     luigi: Jugador
     cintas: list[Cinta]
+    minimo_numero_paquetes: int
     paquetes: int
     frame: int
 
     def __init__(self, dificultad: int):
-        # TODO: Hay que aplicar la dificultad aquí. Cuando se crea la partida,
-        # se configura todo según la dificultad. Es por eso que las cintas
-        # deben crearse aquí también.
-
         # No se a qué se refiere el documento con cintas 0-7 porque la siete
         # acaba en el lado de Mario.
 
@@ -201,7 +198,7 @@ class Partida:
         for cinta in self.cintas:
             cinta.eliminar_paquetes()
 
-        # self.cintas[0].añadir_paquete()
+        self.minimo_numero_paquetes = 1
         self.paquetes = 1
         self.frame = 0
 
@@ -225,12 +222,13 @@ class Partida:
         if posicion is not None:
             jugador = self.mario if resto == 0 else self.luigi
             if jugador.posicion != posicion:
-                self.paquetes += 1
+                self.paquetes += self.minimo_numero_paquetes
                 return True
 
         return False
 
     def update(self):
+        # Generación de paquetes
         if self.frame == 0:
             self.frame = 60
             if self.paquetes > 0:
