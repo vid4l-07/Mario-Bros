@@ -171,6 +171,7 @@ class Partida:
     paquetes: int
     frame: int
     puntos: int
+    fallos: int
     camion: int
 
     def __init__(self, dificultad: int):
@@ -214,6 +215,7 @@ class Partida:
         self.paquetes = 1
         self.frame = 0
         self.puntos = 0
+        self.fallos = 0
         self.camion = 0
 
         MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
@@ -237,6 +239,9 @@ class Partida:
             jugador = self.mario if resto == 0 else self.luigi
             if jugador.posicion != posicion:
                 self.paquetes += self.minimo_numero_paquetes
+                self.fallos += 1
+                if self.fallos >= 3:
+                    pyxel.quit()
                 return True
             else:
                 self.puntos += 1
@@ -281,7 +286,8 @@ class Partida:
         self.mapa.draw((0, 0))
         self.mario.draw()
         self.luigi.draw()
-        pyxel.text(50, 5, str(self.puntos), 0)
+        pyxel.text(50, 5, 'Puntos: ' + str(self.puntos), 0)
+        pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)
 
 
 # TODO: El tamaño del mapa debería ser una constante
