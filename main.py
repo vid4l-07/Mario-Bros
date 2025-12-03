@@ -1,4 +1,5 @@
 import random
+from typing import Self
 import pyxel
 
 class Imagen:
@@ -7,6 +8,7 @@ class Imagen:
     ancho: int
     alto: int
     imagen: int
+
     def __init__(self, imagen: int, posicion: tuple[int, int], tamano: tuple[int, int]):
         self.x, self.y = posicion
         self.ancho, self.alto = tamano
@@ -184,6 +186,9 @@ class Partida:
     minimo_numero_paquetes: int
     paquetes: int
     frame: int
+    puntos: int
+    fallos: int
+    camion: int
 
     def __init__(self, dificultad: int):
         # No se a qué se refiere el documento con cintas 0-7 porque la siete
@@ -191,11 +196,16 @@ class Partida:
         self.animaciones_mario = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
         self.animaciones_luigi = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
 
+        mario_arriba = pyxel.KEY_UP
+        mario_abajo = pyxel.KEY_DOWN
+        luigi_arriba = pyxel.KEY_W
+        luigi_abajo = pyxel.KEY_S
+
         if dificultad == 0:
             self.cintas = cintas[:7]
 
         elif dificultad == 1:
-            self.cintas = cintas[:7]
+            self.cintas = cintas
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(1.5)
 
@@ -209,7 +219,11 @@ class Partida:
         elif dificultad == 3:
             self.cintas = cintas[:7]
             for cinta in self.cintas:
-                cinta.actualizar_velocidad(random.uniform(1, 2)) # no se si se refiere a (1 o 2) o también valores intermedios
+                cinta.actualizar_velocidad(random.uniform(1, 2))
+            mario_arriba = pyxel.KEY_DOWN
+            mario_abajo = pyxel.KEY_UP
+            luigi_arriba = pyxel.KEY_S
+            luigi_abajo = pyxel.KEY_W
 
         # Limpiar las cintas
         for cinta in self.cintas:
@@ -218,13 +232,16 @@ class Partida:
         self.minimo_numero_paquetes = 1
         self.paquetes = 1
         self.frame = 0
+        self.puntos = 0
+        self.fallos = 0
+        self.camion = 0
 
         MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
-        self.mario = Jugador(MARIO_POSICIONES, self.animaciones_mario, (pyxel.KEY_UP, pyxel.KEY_DOWN))
-        self.luigi = Jugador(LUIGI_POSICIONES, self.animaciones_luigi, (pyxel.KEY_W, pyxel.KEY_S))
+        self.mario = Jugador(MARIO_POSICIONES, self.animaciones_mario, (mario_arriba, mario_abajo))
+        self.luigi = Jugador(LUIGI_POSICIONES, self.animaciones_luigi, (luigi_arriba, luigi_abajo))
 
     # Esto comprueba si se cae un paquete
     def fall_handler(self, numero_cinta: int) -> bool:
@@ -240,10 +257,15 @@ class Partida:
             jugador = self.mario if resto == 0 else self.luigi
             if jugador.posicion != posicion:
                 self.paquetes += self.minimo_numero_paquetes
+                self.fallos += 1
+                if self.fallos >= 3:
+                    pyxel.quit()
                 return True
-            elif jugador == self.mario and self.mario.posicion == posicion:
+            else:
+                self.puntos += 1
+            if jugador == self.mario and self.mario.posicion == posicion:
                 self.mario.toggle_anim()
-            elif jugador == self.luigi and self.luigi.posicion == posicion:
+            if jugador == self.luigi and self.luigi.posicion == posicion:
                 self.luigi.toggle_anim()
 
         return False
@@ -278,6 +300,11 @@ class Partida:
         for numero_cinta in salidas:
             if numero_cinta + 1 < len(self.cintas):
                 self.cintas[numero_cinta + 1].añadir_paquete()
+            else:
+                # Cada vez que un paquete llega al final
+                self.camion += 1
+                if self.camion >= 8:
+                    print('camion completo')
 
     def draw(self):
         # El orden es importante
@@ -286,6 +313,8 @@ class Partida:
         self.mapa.draw((0, 0))
         self.mario.draw()
         self.luigi.draw()
+        pyxel.text(50, 5, 'Puntos: ' + str(self.puntos), 0)
+        pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)
 
 
 # TODO: El tamaño del mapa debería ser una constante
