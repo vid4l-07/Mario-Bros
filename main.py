@@ -166,6 +166,8 @@ class Partida:
     mario: Jugador
     luigi: Jugador
     cintas: list[Cinta]
+    paquetes: int
+    frame: int
 
     def __init__(self, dificultad: int):
         # TODO: Hay que aplicar la dificultad aquí. Cuando se crea la partida,
@@ -199,7 +201,9 @@ class Partida:
         for cinta in self.cintas:
             cinta.eliminar_paquetes()
 
-        self.cintas[0].añadir_paquete()
+        # self.cintas[0].añadir_paquete()
+        self.paquetes = 1
+        self.frame = 0
 
         MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
@@ -209,7 +213,7 @@ class Partida:
         self.luigi = Jugador(LUIGI_POSICIONES, MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
 
     # Esto comprueba si se cae un paquete
-    def fall_handler(self, numero_cinta: int):
+    def fall_handler(self, numero_cinta: int) -> bool:
         resto = numero_cinta % 4
         posicion = None
 
@@ -221,9 +225,20 @@ class Partida:
         if posicion is not None:
             jugador = self.mario if resto == 0 else self.luigi
             if jugador.posicion != posicion:
-                pyxel.quit()
+                self.paquetes += 1
+                return True
+
+        return False
 
     def update(self):
+        if self.frame == 0:
+            self.frame = 60
+            if self.paquetes > 0:
+                self.paquetes -= 1
+                self.cintas[0].añadir_paquete()
+
+        self.frame -= 1
+
         # Actualizamos el estado de los jugadores
         self.mario.update()
         self.luigi.update()
@@ -232,9 +247,8 @@ class Partida:
         salidas: list[int] = []
         for numero_cinta, cinta in enumerate(self.cintas):
             salida = cinta.avanzar()
-            if salida:
+            if salida and not self.fall_handler(numero_cinta):
                 salidas.append(numero_cinta)
-                self.fall_handler(numero_cinta)
 
         # Se mueven los paquetes de una cinta a otra
         for numero_cinta in salidas:
