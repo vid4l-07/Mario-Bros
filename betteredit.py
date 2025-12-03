@@ -46,7 +46,7 @@ class Edit:
 
     def update(self):
         if pyxel.btnr(pyxel.MOUSE_BUTTON_LEFT):
-            self.selection = Selection(self.image, self.mx, self.my, pyxel.mouse_x - self.mx, pyxel.mouse_y - self.my)
+            self.selection = Selection(self.image, self.mx + self.vx, self.my + self.vy, pyxel.mouse_x - self.mx, pyxel.mouse_y - self.my)
 
         elif not pyxel.btn(pyxel.MOUSE_BUTTON_LEFT):
             self.selecting = False
@@ -56,7 +56,7 @@ class Edit:
             self.selecting = True
 
         if pyxel.btn(pyxel.MOUSE_BUTTON_RIGHT):
-            pyxel.images[self.image].pset(pyxel.mouse_x, pyxel.mouse_y, 7)
+            pyxel.images[self.image].pset(pyxel.mouse_x + self.vx, pyxel.mouse_y + self.vy, 7)
 
         if pyxel.btnp(pyxel.KEY_1):
             self.image = 0
@@ -85,7 +85,7 @@ class Edit:
             for dy in range(self.selection.h):
                 for dx in range(self.selection.w):
                     color = src.pget(self.selection.x + dx, self.selection.y + dy)
-                    dst.pset(pyxel.mouse_x + dx, pyxel.mouse_y + dy, color)
+                    dst.pset(pyxel.mouse_x + dx + self.vx, pyxel.mouse_y + dy + self.vy, color)
 
         elif pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
