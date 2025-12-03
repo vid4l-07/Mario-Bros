@@ -57,22 +57,37 @@ class Jugador:
     posiciones: list[tuple[int, int]]
     posicion: int
     imagen: Imagen
-    def __init__(self, posiciones: list[tuple[int, int]], imagen: Imagen, teclas) -> None:
+    def __init__(self, posiciones: list[tuple[int, int]], lista_animaciones: list[tuple[Imagen, Imagen]], teclas) -> None:
         self.posiciones = posiciones
         self.posicion = 0
-        self.imagen = imagen
+        self.lista_animaciones = lista_animaciones
+        self.animaciones = self.lista_animaciones[self.posicion]
+        self.animacion = 0
+        self.imagen = self.animaciones[self.animacion]
         self.arriba, self.abajo = teclas
+
+    def toggle_anim(self):
+        if self.animacion == 0:
+            self.animacion = 1
+        elif self.animacion == 1:
+            self.animacion = 0
+        self.imagen = self.animaciones[self.animacion]
 
     def update(self) -> None:
         if pyxel.btnp(self.arriba):
             self.posicion = min(self.posicion + 1, len(self.posiciones) - 1)
+            self.animaciones = self.lista_animaciones[self.posicion]
+            self.imagen = self.animaciones[self.animacion]
 
         elif pyxel.btnp(self.abajo):
             self.posicion = max(self.posicion - 1, 0)
+            self.animaciones = self.lista_animaciones[self.posicion]
+            self.imagen = self.animaciones[self.animacion]
 
     def draw(self) -> None:
         x, y = self.posiciones[self.posicion]
         self.imagen.draw((x, y))
+
 
 # TODO: Imagen de caida
 class Cinta:
@@ -173,6 +188,8 @@ class Partida:
     def __init__(self, dificultad: int):
         # No se a qué se refiere el documento con cintas 0-7 porque la siete
         # acaba en el lado de Mario.
+        self.animaciones_mario = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
+        self.animaciones_luigi = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
 
         if dificultad == 0:
             self.cintas = cintas[:7]
@@ -206,8 +223,8 @@ class Partida:
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
-        self.mario = Jugador(MARIO_POSICIONES, MARIO_1_1, (pyxel.KEY_UP, pyxel.KEY_DOWN))
-        self.luigi = Jugador(LUIGI_POSICIONES, MARIO_1_1, (pyxel.KEY_W, pyxel.KEY_S))
+        self.mario = Jugador(MARIO_POSICIONES, self.animaciones_mario, (pyxel.KEY_UP, pyxel.KEY_DOWN))
+        self.luigi = Jugador(LUIGI_POSICIONES, self.animaciones_luigi, (pyxel.KEY_W, pyxel.KEY_S))
 
     # Esto comprueba si se cae un paquete
     def fall_handler(self, numero_cinta: int) -> bool:
@@ -224,6 +241,10 @@ class Partida:
             if jugador.posicion != posicion:
                 self.paquetes += self.minimo_numero_paquetes
                 return True
+            elif jugador == self.mario and self.mario.posicion == posicion:
+                self.mario.toggle_anim()
+            elif jugador == self.luigi and self.luigi.posicion == posicion:
+                self.luigi.toggle_anim()
 
         return False
 
@@ -240,6 +261,11 @@ class Partida:
         # Actualizamos el estado de los jugadores
         self.mario.update()
         self.luigi.update()
+
+        if self.frame % 5 == 0 and self.mario.animacion == 1:
+            self.mario.toggle_anim()
+        elif self.frame % 5 == 0 and self.luigi.animacion == 1:
+            self.luigi.toggle_anim()
 
         # Las cintas avanzan
         salidas: list[int] = []
