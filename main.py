@@ -87,7 +87,7 @@ class Jugador:
 
     def draw(self) -> None:
         x, y = self.posiciones[self.posicion]
-        self.imagen.draw((x, y))
+        self.imagen.draw((x, y - self.imagen.alto))
 
 
 # TODO: Imagen de caida
@@ -237,8 +237,8 @@ class Partida:
         self.fallos = 0
         self.camion = 0
 
-        MARIO_POSICIONES = [(173,103), (165, 69), (173, 28)]
-        LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
+        MARIO_POSICIONES = [(173, 129), (165, 94), (173, 54)]
+        LUIGI_POSICIONES = [(55, 112), (55, 76), (55, 38)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
