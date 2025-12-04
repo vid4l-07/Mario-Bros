@@ -147,6 +147,8 @@ class Cinta:
 
 MARIO_1_1 = Imagen(2, (18, 152), (27, 26))
 MARIO_1_2 = Imagen(2, (44, 152), (27, 26))
+MARIO_2_1 = Imagen(2, (64, 190), (20, 25))
+MARIO_2_2 = Imagen(2, (34, 186), (22, 29))
 
 PAQUETE_1 = Imagen(2, (135, 116), (9, 4))
 PAQUETE_2 = Imagen(2, (109, 113), (9, 7))
@@ -192,7 +194,7 @@ class Partida:
     def __init__(self, dificultad: int):
         # No se a qué se refiere el documento con cintas 0-7 porque la siete
         # acaba en el lado de Mario.
-        ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
+        ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_1_1, MARIO_1_2)]
         ANIMACIONES_LUIGI = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
 
         mario_arriba = pyxel.KEY_UP
@@ -235,7 +237,7 @@ class Partida:
         self.fallos = 0
         self.camion = 0
 
-        MARIO_POSICIONES = [(173,103), (173, 68), (173, 28)]
+        MARIO_POSICIONES = [(173,103), (165, 69), (173, 28)]
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
