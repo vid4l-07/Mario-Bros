@@ -3,10 +3,10 @@
 
 ### TO-DO
 Principal:
- - [ ] Terminar la dificultad
+ - [x] Terminar la dificultad
  - [ ] Animaciones de los personajes
  - [ ] Jefes
- - [ ] Puntos
+ - [x] Puntos
  - [ ] Camión
 
 Secundario:

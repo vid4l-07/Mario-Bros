@@ -73,7 +73,7 @@ class Jugador:
 
     def toggle_anim(self):
         self.animacion = not self.animacion
-        self.imagen = self.animaciones[self.animacion][self.animacion]
+        self.imagen = self.animaciones[self.posicion][self.animacion]
 
     def update(self) -> None:
         arriba, abajo = self.teclas
