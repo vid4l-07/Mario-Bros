@@ -1,5 +1,4 @@
 import random
-from typing import Self
 import pyxel
 
 class Imagen:
@@ -58,33 +57,33 @@ class Menu:
 class Jugador:
     posiciones: list[tuple[int, int]]
     posicion: int
+    teclas: tuple[int, int]
+    animaciones: list[tuple[Imagen, Imagen]]
+    animacion: bool
     imagen: Imagen
-    def __init__(self, posiciones: list[tuple[int, int]], lista_animaciones: list[tuple[Imagen, Imagen]], teclas) -> None:
+
+    def __init__(self, posiciones: list[tuple[int, int]], animaciones: list[tuple[Imagen, Imagen]], teclas: tuple[int, int]) -> None:
         self.posiciones = posiciones
         self.posicion = 0
-        self.lista_animaciones = lista_animaciones
-        self.animaciones = self.lista_animaciones[self.posicion]
-        self.animacion = 0
-        self.imagen = self.animaciones[self.animacion]
-        self.arriba, self.abajo = teclas
+        self.teclas = teclas
+
+        self.animaciones = animaciones
+        self.animacion = False
+        self.imagen = self.animaciones[self.posicion][self.animacion]
 
     def toggle_anim(self):
-        if self.animacion == 0:
-            self.animacion = 1
-        elif self.animacion == 1:
-            self.animacion = 0
-        self.imagen = self.animaciones[self.animacion]
+        self.animacion = not self.animacion
+        self.imagen = self.animaciones[self.animacion][self.animacion]
 
     def update(self) -> None:
-        if pyxel.btnp(self.arriba):
+        arriba, abajo = self.teclas
+        if pyxel.btnp(arriba):
             self.posicion = min(self.posicion + 1, len(self.posiciones) - 1)
-            self.animaciones = self.lista_animaciones[self.posicion]
-            self.imagen = self.animaciones[self.animacion]
 
-        elif pyxel.btnp(self.abajo):
+        elif pyxel.btnp(abajo):
             self.posicion = max(self.posicion - 1, 0)
-            self.animaciones = self.lista_animaciones[self.posicion]
-            self.imagen = self.animaciones[self.animacion]
+
+        self.imagen = self.animaciones[self.posicion][self.animacion]
 
     def draw(self) -> None:
         x, y = self.posiciones[self.posicion]
@@ -127,7 +126,7 @@ class Cinta:
     def caida(self) -> bool:
         return any(paso >= self.pasos for paso in self.paquetes)
 
-    def avanzar(self):
+    def avanzar(self) -> bool:
         self.frame += 1
         if self.frame < self.velocidad:
             return False
@@ -193,8 +192,8 @@ class Partida:
     def __init__(self, dificultad: int):
         # No se a qué se refiere el documento con cintas 0-7 porque la siete
         # acaba en el lado de Mario.
-        self.animaciones_mario = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
-        self.animaciones_luigi = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
+        ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
+        ANIMACIONES_LUIGI = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
 
         mario_arriba = pyxel.KEY_UP
         mario_abajo = pyxel.KEY_DOWN
@@ -240,8 +239,8 @@ class Partida:
         LUIGI_POSICIONES = [(55,86), (55,50), (55,12)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
-        self.mario = Jugador(MARIO_POSICIONES, self.animaciones_mario, (mario_arriba, mario_abajo))
-        self.luigi = Jugador(LUIGI_POSICIONES, self.animaciones_luigi, (luigi_arriba, luigi_abajo))
+        self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
+        self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
 
     # Esto comprueba si se cae un paquete
     def fall_handler(self, numero_cinta: int) -> bool:
@@ -263,10 +262,7 @@ class Partida:
                 return True
             else:
                 self.puntos += 1
-            if jugador == self.mario and self.mario.posicion == posicion:
-                self.mario.toggle_anim()
-            if jugador == self.luigi and self.luigi.posicion == posicion:
-                self.luigi.toggle_anim()
+                jugador.toggle_anim()
 
         return False
 
@@ -304,7 +300,8 @@ class Partida:
                 # Cada vez que un paquete llega al final
                 self.camion += 1
                 if self.camion >= 8:
-                    print('camion completo')
+                    self.camion = 0
+                    self.puntos += 10
 
     def draw(self):
         # El orden es importante
