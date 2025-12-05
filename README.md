@@ -4,7 +4,7 @@
 ### TO-DO
 Principal:
  - [x] Terminar la dificultad
- - [ ] Animaciones de los personajes
+ - [x] Animaciones de los personajes
  - [ ] Jefes
  - [x] Puntos
  - [ ] Camión

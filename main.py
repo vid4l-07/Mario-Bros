@@ -343,7 +343,6 @@ class Juego:
 
     def __init__(self):
         self.menu = Menu(['Facil', 'Medio', 'Extremo', 'Crazy'])
-
         self.partida = None
 
         pyxel.init(240, 136)
