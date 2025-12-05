@@ -194,6 +194,7 @@ class Partida:
     luigi: Jugador
     cintas: list[Cinta]
     minimo_numero_paquetes: int
+    cada: int
     paquetes: int
     frame: int
     puntos: int
@@ -202,7 +203,7 @@ class Partida:
 
     def __init__(self, dificultad: int):
         ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
-        ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_1_1, LUIGI_1_2), (LUIGI_3_1, LUIGI_3_2)]
+        ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_2_1, LUIGI_2_2), (LUIGI_3_1, LUIGI_3_2)]
 
         mario_arriba = pyxel.KEY_UP
         mario_abajo = pyxel.KEY_DOWN
@@ -211,14 +212,17 @@ class Partida:
 
         if dificultad == 0:
             self.cintas = cintas[:7]
+            self.cada = 50
 
         elif dificultad == 1:
             self.cintas = cintas
+            self.cada = 30
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(1.5)
 
         elif dificultad == 2:
             self.cintas = cintas
+            self.cada = 30
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(2)
             for cinta in self.cintas[2::2]:
@@ -226,6 +230,7 @@ class Partida:
 
         elif dificultad == 3:
             self.cintas = cintas[:7]
+            self.cada = 20
             for cinta in self.cintas:
                 cinta.actualizar_velocidad(random.uniform(1, 2))
             mario_arriba = pyxel.KEY_DOWN
@@ -271,6 +276,8 @@ class Partida:
                 return True
             else:
                 self.puntos += 1
+                if self.puntos >= self.cada:
+                    self.minimo_numero_paquetes += 1
                 # TODO: Pasar a la función la velocidad de la cinta que deja
                 # caer el paquete. La clase Jugador desactiva la animación por
                 # sí misma.
@@ -314,6 +321,9 @@ class Partida:
                 if self.camion >= 8:
                     self.camion = 0
                     self.puntos += 10
+                    if self.puntos >= self.cada:
+                        self.minimo_numero_paquetes += 1
+                self.paquetes += self.minimo_numero_paquetes
 
     def draw(self):
         # El orden es importante
