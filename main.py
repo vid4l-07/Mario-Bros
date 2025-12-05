@@ -152,6 +152,13 @@ MARIO_2_2 = Imagen(2, (34, 186), (22, 29))
 MARIO_3_1 = Imagen(2, (111, 152), (21, 27))
 MARIO_3_2 = Imagen(2, (133, 152), (21, 27))
 
+LUIGI_1_1 = Imagen(2, (88, 184), (19, 27))
+LUIGI_1_2 = Imagen(2, (112, 184), (22, 27))
+LUIGI_2_1 = Imagen(2, (158, 184), (17, 29))
+LUIGI_2_2 = Imagen(2, (138, 184), (19, 29))
+LUIGI_3_1 = Imagen(2, (203, 149), (43, 32))
+LUIGI_3_2 = Imagen(2, (159, 149), (26, 32))
+
 PAQUETE_1 = Imagen(2, (135, 116), (9, 4))
 PAQUETE_2 = Imagen(2, (109, 113), (9, 7))
 PAQUETE_3 = Imagen(2, (151, 94), (9, 7))
@@ -195,7 +202,7 @@ class Partida:
 
     def __init__(self, dificultad: int):
         ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
-        ANIMACIONES_LUIGI = [(MARIO_1_1, MARIO_1_2), (MARIO_1_2, MARIO_1_1), (MARIO_1_1, MARIO_1_2)]
+        ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_1_1, LUIGI_1_2), (LUIGI_3_1, LUIGI_3_2)]
 
         mario_arriba = pyxel.KEY_UP
         mario_abajo = pyxel.KEY_DOWN
@@ -238,7 +245,7 @@ class Partida:
         self.camion = 0
 
         MARIO_POSICIONES = [(160, 129), (163, 94), (165, 54)]
-        LUIGI_POSICIONES = [(55, 112), (55, 76), (55, 38)]
+        LUIGI_POSICIONES = [(54, 112), (57, 76), (30, 38)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
@@ -264,6 +271,9 @@ class Partida:
                 return True
             else:
                 self.puntos += 1
+                # TODO: Pasar a la función la velocidad de la cinta que deja
+                # caer el paquete. La clase Jugador desactiva la animación por
+                # sí misma.
                 jugador.toggle_anim()
 
         return False
