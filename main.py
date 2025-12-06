@@ -188,6 +188,28 @@ cinta0 = Cinta(PAQUETE_1, (217, 108), 3, -1)
 cinta0.añadir_paquete()
 cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
 
+class Camion:
+    paquetes: int
+    imagen: Imagen
+
+    def __init__(self):
+        self.paquetes = 0
+        self.imagen = Imagen(2, (180, 184), (36, 41))
+
+    def añadir_paquete(self) -> bool:
+        self.paquetes += 1
+        if self.paquetes >= 8:
+            return True
+
+        return False
+
+    def draw(self):
+        self.imagen.draw((4, 39))
+        for paquete in range(self.paquetes):
+            columna = paquete % 2
+            fila = paquete // 2
+            PAQUETE_6.draw((19 + (columna * 11), 58 - (fila * 10)))
+
 class Partida:
     mapa: Imagen
     mario: Jugador
@@ -199,7 +221,8 @@ class Partida:
     frame: int
     puntos: int
     fallos: int
-    camion: int
+    paquetes_camion: int
+    camion: Camion
 
     def __init__(self, dificultad: int):
         ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
@@ -247,7 +270,7 @@ class Partida:
         self.frame = 0
         self.puntos = 0
         self.fallos = 0
-        self.camion = 0
+        self.paquetes_camion = 0
 
         MARIO_POSICIONES = [(160, 129), (163, 94), (165, 54)]
         LUIGI_POSICIONES = [(54, 112), (57, 76), (30, 38)]
@@ -255,6 +278,7 @@ class Partida:
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
         self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
+        self.camion = Camion()
 
     # Esto comprueba si se cae un paquete
     def fall_handler(self, numero_cinta: int) -> bool:
@@ -262,8 +286,10 @@ class Partida:
         posicion = None
 
         if resto == 0:
+            # Por la derecha
             posicion = numero_cinta % 3
         elif resto == 2:
+            # Por la izquierda
             posicion = (numero_cinta + 1) % 3
 
         if posicion is not None:
@@ -317,9 +343,7 @@ class Partida:
                 self.cintas[numero_cinta + 1].añadir_paquete()
             else:
                 # Cada vez que un paquete llega al final
-                self.camion += 1
-                if self.camion >= 8:
-                    self.camion = 0
+                if self.camion.añadir_paquete():
                     self.puntos += 10
                     if self.puntos >= self.cada:
                         self.minimo_numero_paquetes += 1
@@ -329,6 +353,7 @@ class Partida:
         # El orden es importante
         for cinta in self.cintas:
             cinta.draw()
+        self.camion.draw()
         self.mapa.draw((0, 0))
         self.mario.draw()
         self.luigi.draw()
