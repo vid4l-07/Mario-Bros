@@ -74,6 +74,10 @@ class Jugador:
 
         self.frame = 0
 
+    # Se llama cuando el personaje mueve un paquete. Esta función recive la
+    # velocidad de la cinta desde la que el personaje coge el paquete. Esto
+    # permite saber el tiempo justo que tiene que tardar el personaje en
+    # desactivar la animación.
     def activar_animacion(self, tiempo: int):
         self.frame = tiempo
         self.animacion = True
@@ -84,15 +88,13 @@ class Jugador:
         if pyxel.btnp(arriba):
             self.frame = 0 # Se cancela la animación
             self.posicion = min(self.posicion + 1, len(self.posiciones) - 1)
-
         elif pyxel.btnp(abajo):
             self.frame = 0 # Se cancela la animación
             self.posicion = max(self.posicion - 1, 0)
 
         if self.frame > 0:
             self.frame -= 1
-
-        if self.frame == 0:
+        elif self.frame == 0:
             self.animacion = False
 
         self.imagen = self.animaciones[self.posicion][self.animacion]
@@ -100,6 +102,8 @@ class Jugador:
     def draw(self) -> None:
         x, y = self.posiciones[self.posicion]
         self.imagen.draw((x, y - self.imagen.alto))
+        # Se calcula la coordenada del personaje desde la base. Esto es
+        # necesario ya que hay animaciones con distinta altura.
 
 
 # TODO: Imagen de caida
