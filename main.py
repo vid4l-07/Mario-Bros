@@ -58,9 +58,10 @@ class Jugador:
     posiciones: list[tuple[int, int]]
     posicion: int
     teclas: tuple[int, int]
-    animaciones: list[tuple[Imagen, Imagen]]
     animacion: bool
+    animaciones: list[tuple[Imagen, Imagen]]
     imagen: Imagen
+    frame: int
 
     def __init__(self, posiciones: list[tuple[int, int]], animaciones: list[tuple[Imagen, Imagen]], teclas: tuple[int, int]) -> None:
         self.posiciones = posiciones
@@ -71,8 +72,11 @@ class Jugador:
         self.animacion = False
         self.imagen = self.animaciones[self.posicion][self.animacion]
 
-    def toggle_anim(self):
-        self.animacion = not self.animacion
+        self.frame = 0
+
+    def activar_animacion(self, tiempo: int):
+        self.frame = tiempo
+        self.animacion = True
         self.imagen = self.animaciones[self.posicion][self.animacion]
 
     def update(self) -> None:
@@ -82,6 +86,12 @@ class Jugador:
 
         elif pyxel.btnp(abajo):
             self.posicion = max(self.posicion - 1, 0)
+
+        if self.frame > 0:
+            self.frame -= 1
+
+        if self.frame == 0:
+            self.animacion = False
 
         self.imagen = self.animaciones[self.posicion][self.animacion]
 
@@ -95,7 +105,7 @@ class Cinta:
     imagen_paquete: Imagen
     paquetes: list[int]
     inicio: tuple[int, int]
-    velocidad: float
+    velocidad: int
     frame: int
     direccion: int
     pasos: int
@@ -106,7 +116,7 @@ class Cinta:
         self.inicio = inicio
         self.direccion = direccion
         self.pasos = pasos
-        self.velocidad = 20 / factor_velocidad
+        self.velocidad = int(20 / factor_velocidad)
         self.frame = 0
 
     def añadir_paquete(self):
@@ -116,7 +126,7 @@ class Cinta:
         self.paquetes.clear()
 
     def actualizar_velocidad(self, factor: float):
-        self.velocidad = 20 / factor
+        self.velocidad = int(20 / factor)
 
     def draw(self):
         x, y = self.inicio
@@ -198,7 +208,8 @@ class Camion:
 
     def añadir_paquete(self) -> bool:
         self.paquetes += 1
-        if self.paquetes >= 8:
+        if self.paquetes >= 2:
+            self.paquetes = 0
             return True
 
         return False
@@ -216,18 +227,16 @@ class Partida:
     luigi: Jugador
     cintas: list[Cinta]
     minimo_numero_paquetes: int
-    cada: int
+    cada_puntos: int
+    cada_repartos: int
     paquetes: int
     frame: int
     puntos: int
     fallos: int
-    paquetes_camion: int
+    repartos: int
     camion: Camion
 
     def __init__(self, dificultad: int):
-        ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
-        ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_2_1, LUIGI_2_2), (LUIGI_3_1, LUIGI_3_2)]
-
         mario_arriba = pyxel.KEY_UP
         mario_abajo = pyxel.KEY_DOWN
         luigi_arriba = pyxel.KEY_W
@@ -235,17 +244,20 @@ class Partida:
 
         if dificultad == 0:
             self.cintas = cintas[:7]
-            self.cada = 50
+            self.cada_puntos = 50
+            self.cada_repartos = 3
 
         elif dificultad == 1:
             self.cintas = cintas
-            self.cada = 30
+            self.cada_puntos = 30
+            self.cada_repartos = 5
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(1.5)
 
         elif dificultad == 2:
             self.cintas = cintas
-            self.cada = 30
+            self.cada_puntos = 30
+            self.cada_repartos = 5
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(2)
             for cinta in self.cintas[2::2]:
@@ -253,7 +265,8 @@ class Partida:
 
         elif dificultad == 3:
             self.cintas = cintas[:7]
-            self.cada = 20
+            self.cada_puntos = 20
+            self.cada_repartos = 0
             for cinta in self.cintas:
                 cinta.actualizar_velocidad(random.uniform(1, 2))
             mario_arriba = pyxel.KEY_DOWN
@@ -270,10 +283,13 @@ class Partida:
         self.frame = 0
         self.puntos = 0
         self.fallos = 0
-        self.paquetes_camion = 0
+        self.repartos = 0
 
         MARIO_POSICIONES = [(160, 129), (163, 94), (165, 54)]
         LUIGI_POSICIONES = [(54, 112), (57, 76), (30, 38)]
+
+        ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
+        ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_2_1, LUIGI_2_2), (LUIGI_3_1, LUIGI_3_2)]
 
         self.mapa = Imagen(1, (0, 0), (240, 136))
         self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
@@ -302,12 +318,9 @@ class Partida:
                 return True
             else:
                 self.puntos += 1
-                if self.puntos >= self.cada:
+                if self.puntos >= self.cada_puntos:
                     self.minimo_numero_paquetes += 1
-                # TODO: Pasar a la función la velocidad de la cinta que deja
-                # caer el paquete. La clase Jugador desactiva la animación por
-                # sí misma.
-                jugador.toggle_anim()
+                jugador.activar_animacion(self.cintas[numero_cinta].velocidad)
 
         return False
 
@@ -325,11 +338,6 @@ class Partida:
         self.mario.update()
         self.luigi.update()
 
-        if self.frame % 5 == 0 and self.mario.animacion == 1:
-            self.mario.toggle_anim()
-        elif self.frame % 5 == 0 and self.luigi.animacion == 1:
-            self.luigi.toggle_anim()
-
         # Las cintas avanzan
         salidas: list[int] = []
         for numero_cinta, cinta in enumerate(self.cintas):
@@ -344,9 +352,16 @@ class Partida:
             else:
                 # Cada vez que un paquete llega al final
                 if self.camion.añadir_paquete():
+                    self.repartos += 1
+                    if self.repartos == self.cada_repartos:
+                        self.cada_repartos = 0
+                        self.fallos = max(0 , self.fallos - 1)
+                    # Actualizar el mínimo de paquetes
                     self.puntos += 10
-                    if self.puntos >= self.cada:
+                    if self.puntos == self.cada_puntos:
                         self.minimo_numero_paquetes += 1
+
+                # Generar más paquetes
                 self.paquetes += self.minimo_numero_paquetes
 
     def draw(self):
