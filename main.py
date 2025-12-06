@@ -187,10 +187,57 @@ class Camion:
             fila = paquete // 2
             PAQUETE_6.draw((19 + (columna * 11), 58 - (fila * 10)))
 
+# Una clase para encapsular una imagen junto a una posición
+class Frame:
+    imagen: Imagen
+    posicion: tuple[int, int]
+
+    def __init__(self, imagen: Imagen, posicion: tuple[int, int]):
+        self.imagen = imagen
+        self.posicion = posicion
+
+    def draw(self):
+        self.imagen.draw(self.posicion)
+
 # Estas animaciones son más largas y requieren parar el juego
 class Animacion:
-    def __init__(self):
-        pass
+    secuencia: list[list[Frame]]
+    contador_secuencia: int
+    activo: bool
+    frame: int
+
+    def __init__(self, secuencia: list[list[Frame]]):
+        self.secuencia = secuencia
+        self.contador_secuencia = 0
+        self.activo = False
+        self.frame = 0
+
+    def update(self):
+        if not self.activo:
+            return
+
+        if self.frame < 60:
+            self.frame += 1
+            return
+        self.frame = 0 
+
+        self.contador_secuencia += 1
+
+        if self.contador_secuencia >= len(self.secuencia):
+            self.activo = False
+            self.contador_secuencia = 0
+            return
+
+    def draw(self):
+        for frame in self.secuencia[self.contador_secuencia]:
+            frame.draw()
+
+ANIMACION_JEFE_MARIO_FRAME_1_1 = Frame(Imagen(2, (225, 72), (16, 29)), (222, 64))
+ANIMACION_JEFE_MARIO_FRAME_1_2 = Frame(Imagen(2, (207, 74), (13, 27)), (205, 66))
+
+ANIMACION_JEFE_MARIO = Animacion([
+    [ANIMACION_JEFE_MARIO_FRAME_1_1, ANIMACION_JEFE_MARIO_FRAME_1_2]
+])
 
 MARIO_1_1 = Imagen(2, (32, 152), (39, 26))
 MARIO_1_2 = Imagen(2, (77, 152), (27, 27))
@@ -256,6 +303,7 @@ class Partida:
     fallos: int
     repartos: int
     camion: Camion
+    animacion: Animacion | None
 
     def __init__(self, dificultad: int):
         mario_arriba = pyxel.KEY_UP
@@ -306,7 +354,7 @@ class Partida:
         self.puntos = 0
         self.fallos = 0
         self.repartos = 0
-
+        self.animacion = None
 
         self.mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
         self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
@@ -325,6 +373,9 @@ class Partida:
             return False
 
         if jugador.posicion != cinta.nivel:
+            ANIMACION_JEFE_MARIO.activo = True
+            self.animacion = ANIMACION_JEFE_MARIO
+
             self.paquetes += self.minimo_numero_paquetes
             self.fallos += 1
             if self.fallos >= 3:
@@ -340,6 +391,10 @@ class Partida:
         return False
 
     def update(self):
+        if self.animacion and self.animacion.activo:
+            self.animacion.update()
+            return
+
         # Generación de paquetes
         if self.frame == 0:
             self.frame = 60
@@ -381,12 +436,18 @@ class Partida:
 
     def draw(self):
         # El orden es importante
-        for cinta in self.cintas:
-            cinta.draw()
-        self.camion.draw()
-        self.mapa.draw((0, 0))
-        self.mario.draw()
-        self.luigi.draw()
+
+        if self.animacion == None or not self.animacion.activo:
+            for cinta in self.cintas:
+                cinta.draw()
+            self.camion.draw()
+            self.mapa.draw((0, 0))
+            self.mario.draw()
+            self.luigi.draw()
+        elif self.animacion.activo:
+            self.mapa.draw((0, 0))
+            self.animacion.draw()
+
         pyxel.text(50, 5, 'Puntos: ' + str(self.puntos), 0)
         pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)
 
