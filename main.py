@@ -233,8 +233,8 @@ class Partida:
     luigi: Jugador
     cintas: list[Cinta]
     minimo_numero_paquetes: int
-    cada_puntos: int
-    cada_repartos: int
+    puntos_para_subir_numero_paquetes_minimos: int
+    repartos_para_quitar_fallo: int
     paquetes: int
     frame: int
     puntos: int
@@ -248,22 +248,23 @@ class Partida:
         luigi_arriba = pyxel.KEY_W
         luigi_abajo = pyxel.KEY_S
 
+        # TODO: no se si hacer un método para aplicar la dificultad
         if dificultad == 0:
             self.cintas = cintas[:7]
-            self.cada_puntos = 50
-            self.cada_repartos = 3
+            self.puntos_para_subir_numero_paquetes_minimos = 50
+            self.repartos_para_quitar_fallo = 3
 
         elif dificultad == 1:
             self.cintas = cintas
-            self.cada_puntos = 30
-            self.cada_repartos = 5
+            self.puntos_para_subir_numero_paquetes_minimos = 30
+            self.repartos_para_quitar_fallo = 5
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(1.5)
 
         elif dificultad == 2:
             self.cintas = cintas
-            self.cada_puntos = 30
-            self.cada_repartos = 5
+            self.puntos_para_subir_numero_paquetes_minimos = 30
+            self.repartos_para_quitar_fallo = 5
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(2)
             for cinta in self.cintas[2::2]:
@@ -271,8 +272,8 @@ class Partida:
 
         elif dificultad == 3:
             self.cintas = cintas[:7]
-            self.cada_puntos = 20
-            self.cada_repartos = 0
+            self.puntos_para_subir_numero_paquetes_minimos = 20
+            self.repartos_para_quitar_fallo = 0
             for cinta in self.cintas:
                 cinta.actualizar_velocidad(random.uniform(1, 2))
             mario_arriba = pyxel.KEY_DOWN
@@ -291,9 +292,11 @@ class Partida:
         self.fallos = 0
         self.repartos = 0
 
+        # TODO: sacar como constantes
         MARIO_POSICIONES = [(160, 129), (163, 94), (165, 54)]
         LUIGI_POSICIONES = [(54, 112), (57, 76), (30, 38)]
 
+        # TODO: sacar como constantes
         ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
         ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_2_1, LUIGI_2_2), (LUIGI_3_1, LUIGI_3_2)]
 
@@ -324,7 +327,7 @@ class Partida:
                 return True
             else:
                 self.puntos += 1
-                if self.puntos >= self.cada_puntos:
+                if self.puntos >= self.puntos_para_subir_numero_paquetes_minimos:
                     self.minimo_numero_paquetes += 1
                 jugador.activar_animacion(self.cintas[numero_cinta].velocidad)
 
@@ -359,12 +362,12 @@ class Partida:
                 # Cada vez que un paquete llega al final
                 if self.camion.añadir_paquete():
                     self.repartos += 1
-                    if self.repartos == self.cada_repartos:
-                        self.cada_repartos = 0
+                    if self.repartos == self.repartos_para_quitar_fallo:
+                        self.repartos_para_quitar_fallo = 0
                         self.fallos = max(0 , self.fallos - 1)
                     # Actualizar el mínimo de paquetes
                     self.puntos += 10
-                    if self.puntos == self.cada_puntos:
+                    if self.puntos == self.puntos_para_subir_numero_paquetes_minimos:
                         self.minimo_numero_paquetes += 1
 
                 # Generar más paquetes
@@ -389,7 +392,7 @@ class Juego:
 
     def __init__(self):
         self.menu = Menu(['Facil', 'Medio', 'Extremo', 'Crazy'])
-        self.partida = None
+        self.partida = Partida(0)
 
         pyxel.init(240, 136)
         pyxel.load('my_resource.pyxres')
