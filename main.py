@@ -62,8 +62,9 @@ class Jugador:
     animaciones: list[tuple[Imagen, Imagen]]
     imagen: Imagen
     frame: int
+    animacion_jefe: Animacion
 
-    def __init__(self, posiciones: list[tuple[int, int]], animaciones: list[tuple[Imagen, Imagen]], teclas: tuple[int, int]) -> None:
+    def __init__(self, posiciones: list[tuple[int, int]], animaciones: list[tuple[Imagen, Imagen]], teclas: tuple[int, int], animacion_jefe: Animacion):
         self.posiciones = posiciones
         self.posicion = 0
         self.teclas = teclas
@@ -73,6 +74,8 @@ class Jugador:
         self.imagen = self.animaciones[self.posicion][self.animacion]
 
         self.frame = 0
+
+        self.animacion_jefe = animacion_jefe
 
     # Se llama cuando el personaje mueve un paquete. Esta función recive la
     # velocidad de la cinta desde la que el personaje coge el paquete. Esto
@@ -216,7 +219,7 @@ class Animacion:
         if not self.activo:
             return
 
-        if self.frame < 60:
+        if self.frame < 30:
             self.frame += 1
             return
         self.frame = 0 
@@ -232,11 +235,15 @@ class Animacion:
         for frame in self.secuencia[self.contador_secuencia]:
             frame.draw()
 
-ANIMACION_JEFE_MARIO_FRAME_1_1 = Frame(Imagen(2, (225, 72), (16, 29)), (222, 64))
-ANIMACION_JEFE_MARIO_FRAME_1_2 = Frame(Imagen(2, (207, 74), (13, 27)), (205, 66))
+ANIMACION_JEFE_MARIO_FRAME_1_1 = Frame(Imagen(2, (226, 72), (16, 29)), (222, 64))
+ANIMACION_JEFE_MARIO_FRAME_1_2 = Frame(Imagen(2, (207, 74), (18, 27)), (205, 66))
+
+ANIMACION_JEFE_MARIO_FRAME_2_1 = Frame(Imagen(2, (52, 220), (16, 29)), (222, 64))
+ANIMACION_JEFE_MARIO_FRAME_2_2 = Frame(Imagen(2, (32, 220), (14, 27)), (205, 66))
 
 ANIMACION_JEFE_MARIO = Animacion([
-    [ANIMACION_JEFE_MARIO_FRAME_1_1, ANIMACION_JEFE_MARIO_FRAME_1_2]
+    [ANIMACION_JEFE_MARIO_FRAME_1_1, ANIMACION_JEFE_MARIO_FRAME_1_2],
+    [ANIMACION_JEFE_MARIO_FRAME_2_1, ANIMACION_JEFE_MARIO_FRAME_2_2],
 ])
 
 MARIO_1_1 = Imagen(2, (32, 152), (39, 26))
@@ -357,8 +364,8 @@ class Partida:
         self.animacion = None
 
         self.mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
-        self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
-        self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
+        self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo), ANIMACION_JEFE_MARIO)
+        self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo), ANIMACION_JEFE_MARIO)
         self.camion = Camion()
 
     # Esto comprueba si se cae un paquete
@@ -373,8 +380,8 @@ class Partida:
             return False
 
         if jugador.posicion != cinta.nivel:
-            ANIMACION_JEFE_MARIO.activo = True
-            self.animacion = ANIMACION_JEFE_MARIO
+            jugador.animacion_jefe.activo = True
+            self.animacion = jugador.animacion_jefe
 
             self.paquetes += self.minimo_numero_paquetes
             self.fallos += 1
