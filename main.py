@@ -105,7 +105,6 @@ class Jugador:
         # Se calcula la coordenada del personaje desde la base. Esto es
         # necesario ya que hay animaciones con distinta altura.
 
-
 # TODO: Imagen de caida
 class Cinta:
     imagen_paquete: Imagen
@@ -161,49 +160,6 @@ class Cinta:
         self.paquetes = nuevos
         return salida
 
-MARIO_1_1 = Imagen(2, (32, 152), (39, 26))
-MARIO_1_2 = Imagen(2, (77, 152), (27, 27))
-MARIO_2_1 = Imagen(2, (62, 190), (20, 25))
-MARIO_2_2 = Imagen(2, (34, 186), (22, 29))
-MARIO_3_1 = Imagen(2, (111, 152), (21, 27))
-MARIO_3_2 = Imagen(2, (133, 152), (21, 27))
-
-LUIGI_1_1 = Imagen(2, (88, 184), (19, 27))
-LUIGI_1_2 = Imagen(2, (112, 184), (22, 27))
-LUIGI_2_1 = Imagen(2, (158, 184), (17, 29))
-LUIGI_2_2 = Imagen(2, (138, 184), (19, 29))
-LUIGI_3_1 = Imagen(2, (203, 149), (43, 32))
-LUIGI_3_2 = Imagen(2, (159, 149), (26, 32))
-
-PAQUETE_1 = Imagen(2, (135, 116), (9, 4))
-PAQUETE_2 = Imagen(2, (109, 113), (9, 7))
-PAQUETE_3 = Imagen(2, (151, 94), (9, 7))
-PAQUETE_4 = Imagen(2, (109, 73), (9, 9))
-PAQUETE_5 = Imagen(2, (136, 36), (9, 9))
-PAQUETE_6 = Imagen(2, (109, 36), (9, 9))
-
-# PAQUETE_1_CAIDA = Imagen(2, (9, 152), (9, 9))
-# PAQUETE_2_CAIDA = Imagen(2, (75, 114), (10, 10))
-# PAQUETE_3_CAIDA = Imagen(2, (162, 94), (10, 11))
-# PAQUETE_4_CAIDA = Imagen(2, (0, 164), (11, 12))
-# PAQUETE_5_CAIDA = Imagen(2, (0, 184), (12, 12))
-# PAQUETE_6_CAIDA = Imagen(2, (16, 184), (13, 13))
-
-cinta10 = Cinta(PAQUETE_6, (106, 28), 4, -1)
-cinta9 = Cinta(PAQUETE_5, (155, 28),  4, -1)
-cinta8 = Cinta(PAQUETE_5, (126, 47),  4, 1)
-cinta7 = Cinta(PAQUETE_4, (77,  46),  4, 1)
-cinta6 = Cinta(PAQUETE_4, (106, 65),  4, -1)
-cinta5 = Cinta(PAQUETE_3, (155, 67),  4, -1)
-cinta4 = Cinta(PAQUETE_3, (126, 86),  4, 1)
-cinta3 = Cinta(PAQUETE_2, (77,  86),  4, 1)
-cinta2 = Cinta(PAQUETE_2, (106, 105), 4, -1)
-cinta1 = Cinta(PAQUETE_1, (154, 108), 4, -1)
-cinta0 = Cinta(PAQUETE_1, (217, 108), 3, -1)
-
-cinta0.añadir_paquete()
-cintas = [cinta0, cinta1, cinta2, cinta3, cinta4, cinta5, cinta6, cinta7, cinta8, cinta9, cinta10]
-
 class Camion:
     paquetes: int
     imagen: Imagen
@@ -226,6 +182,56 @@ class Camion:
             columna = paquete % 2
             fila = paquete // 2
             PAQUETE_6.draw((19 + (columna * 11), 58 - (fila * 10)))
+
+MARIO_1_1 = Imagen(2, (32, 152), (39, 26))
+MARIO_1_2 = Imagen(2, (77, 152), (27, 27))
+MARIO_2_1 = Imagen(2, (62, 190), (20, 25))
+MARIO_2_2 = Imagen(2, (34, 186), (22, 29))
+MARIO_3_1 = Imagen(2, (111, 152), (21, 27))
+MARIO_3_2 = Imagen(2, (133, 152), (21, 27))
+
+LUIGI_1_1 = Imagen(2, (88, 184), (19, 27))
+LUIGI_1_2 = Imagen(2, (112, 184), (22, 27))
+LUIGI_2_1 = Imagen(2, (158, 184), (17, 29))
+LUIGI_2_2 = Imagen(2, (138, 184), (19, 29))
+LUIGI_3_1 = Imagen(2, (203, 149), (43, 32))
+LUIGI_3_2 = Imagen(2, (159, 149), (26, 32))
+
+MARIO_POSICIONES = [(160, 129), (163, 94), (165, 54)]
+LUIGI_POSICIONES = [(54, 112), (57, 76), (30, 38)]
+
+ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
+ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_2_1, LUIGI_2_2), (LUIGI_3_1, LUIGI_3_2)]
+
+PAQUETE_1 = Imagen(2, (135, 116), (9, 4))
+PAQUETE_2 = Imagen(2, (109, 113), (9, 7))
+PAQUETE_3 = Imagen(2, (151, 94), (9, 7))
+PAQUETE_4 = Imagen(2, (109, 73), (9, 9))
+PAQUETE_5 = Imagen(2, (136, 36), (9, 9))
+PAQUETE_6 = Imagen(2, (109, 36), (9, 9))
+
+# PAQUETE_1_CAIDA = Imagen(2, (9, 152), (9, 9))
+# PAQUETE_2_CAIDA = Imagen(2, (75, 114), (10, 10))
+# PAQUETE_3_CAIDA = Imagen(2, (162, 94), (10, 11))
+# PAQUETE_4_CAIDA = Imagen(2, (0, 164), (11, 12))
+# PAQUETE_5_CAIDA = Imagen(2, (0, 184), (12, 12))
+# PAQUETE_6_CAIDA = Imagen(2, (16, 184), (13, 13))
+
+CINTA10 = Cinta(PAQUETE_6, (106, 28), 4, -1)
+CINTA9 = Cinta(PAQUETE_5, (155, 28),  4, -1)
+CINTA8 = Cinta(PAQUETE_5, (126, 47),  4, 1)
+CINTA7 = Cinta(PAQUETE_4, (77,  46),  4, 1)
+CINTA6 = Cinta(PAQUETE_4, (106, 65),  4, -1)
+CINTA5 = Cinta(PAQUETE_3, (155, 67),  4, -1)
+CINTA4 = Cinta(PAQUETE_3, (126, 86),  4, 1)
+CINTA3 = Cinta(PAQUETE_2, (77,  86),  4, 1)
+CINTA2 = Cinta(PAQUETE_2, (106, 105), 4, -1)
+CINTA1 = Cinta(PAQUETE_1, (154, 108), 4, -1)
+CINTA0 = Cinta(PAQUETE_1, (217, 108), 3, -1)
+
+CINTAS = [CINTA0, CINTA1, CINTA2, CINTA3, CINTA4, CINTA5, CINTA6, CINTA7, CINTA8, CINTA9, CINTA10]
+
+MAPA_DIMENSIONES = (240, 136)
 
 class Partida:
     mapa: Imagen
@@ -250,19 +256,19 @@ class Partida:
 
         # TODO: no se si hacer un método para aplicar la dificultad
         if dificultad == 0:
-            self.cintas = cintas[:7]
+            self.cintas = CINTAS[:7]
             self.puntos_para_subir_numero_paquetes_minimos = 50
             self.repartos_para_quitar_fallo = 3
 
         elif dificultad == 1:
-            self.cintas = cintas
+            self.cintas = CINTAS
             self.puntos_para_subir_numero_paquetes_minimos = 30
             self.repartos_para_quitar_fallo = 5
             for cinta in self.cintas[1::2]:
                 cinta.actualizar_velocidad(1.5)
 
         elif dificultad == 2:
-            self.cintas = cintas
+            self.cintas = CINTAS
             self.puntos_para_subir_numero_paquetes_minimos = 30
             self.repartos_para_quitar_fallo = 5
             for cinta in self.cintas[1::2]:
@@ -271,7 +277,7 @@ class Partida:
                 cinta.actualizar_velocidad(1.5)
 
         elif dificultad == 3:
-            self.cintas = cintas[:7]
+            self.cintas = CINTAS[:7]
             self.puntos_para_subir_numero_paquetes_minimos = 20
             self.repartos_para_quitar_fallo = 0
             for cinta in self.cintas:
@@ -292,15 +298,8 @@ class Partida:
         self.fallos = 0
         self.repartos = 0
 
-        # TODO: sacar como constantes
-        MARIO_POSICIONES = [(160, 129), (163, 94), (165, 54)]
-        LUIGI_POSICIONES = [(54, 112), (57, 76), (30, 38)]
 
-        # TODO: sacar como constantes
-        ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
-        ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_2_1, LUIGI_2_2), (LUIGI_3_1, LUIGI_3_2)]
-
-        self.mapa = Imagen(1, (0, 0), (240, 136))
+        self.mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
         self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
         self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
         self.camion = Camion()
@@ -385,7 +384,6 @@ class Partida:
         pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)
 
 
-# TODO: El tamaño del mapa debería ser una constante
 class Juego:
     menu: Menu
     partida: None | Partida
@@ -394,7 +392,8 @@ class Juego:
         self.menu = Menu(['Facil', 'Medio', 'Extremo', 'Crazy'])
         self.partida = Partida(0)
 
-        pyxel.init(240, 136)
+        MAPA_ANCHO, MAPA_ALTO = MAPA_DIMENSIONES
+        pyxel.init(MAPA_ANCHO, MAPA_ALTO)
         pyxel.load('my_resource.pyxres')
         pyxel.run(self.update, self.draw)
 
