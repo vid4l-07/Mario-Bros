@@ -187,6 +187,11 @@ class Camion:
             fila = paquete // 2
             PAQUETE_6.draw((19 + (columna * 11), 58 - (fila * 10)))
 
+# Estas animaciones son más largas y requieren parar el juego
+class Animacion:
+    def __init__(self):
+        pass
+
 MARIO_1_1 = Imagen(2, (32, 152), (39, 26))
 MARIO_1_2 = Imagen(2, (77, 152), (27, 27))
 MARIO_2_1 = Imagen(2, (62, 190), (20, 25))
