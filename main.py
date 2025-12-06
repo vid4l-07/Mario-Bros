@@ -114,15 +114,19 @@ class Cinta:
     frame: int
     direccion: int
     pasos: int
+    lado: str | None
+    nivel: int | None
 
-    def __init__(self, imagen_paquete: Imagen, inicio: tuple[int, int], pasos: int, direccion: int, factor_velocidad: float = 1):
+    def __init__(self, imagen_paquete: Imagen, inicio: tuple[int, int], pasos: int, direccion: int, lado: str | None = None, nivel: int | None = None):
         self.imagen_paquete = imagen_paquete
         self.paquetes = []
         self.inicio = inicio
+        self.velocidad = 20
+        self.frame = 0
         self.direccion = direccion
         self.pasos = pasos
-        self.velocidad = int(20 / factor_velocidad)
-        self.frame = 0
+        self.lado = lado
+        self.nivel = nivel
 
     def añadir_paquete(self):
         self.paquetes.append(0)
@@ -170,7 +174,7 @@ class Camion:
 
     def añadir_paquete(self) -> bool:
         self.paquetes += 1
-        if self.paquetes >= 2:
+        if self.paquetes >= 8:
             self.paquetes = 0
             return True
 
@@ -217,17 +221,17 @@ PAQUETE_6 = Imagen(2, (109, 36), (9, 9))
 # PAQUETE_5_CAIDA = Imagen(2, (0, 184), (12, 12))
 # PAQUETE_6_CAIDA = Imagen(2, (16, 184), (13, 13))
 
-CINTA10 = Cinta(PAQUETE_6, (106, 28), 4, -1)
+CINTA10 = Cinta(PAQUETE_6, (106, 28), 4, -1, 'IZQ', 2)
 CINTA9 = Cinta(PAQUETE_5, (155, 28),  4, -1)
-CINTA8 = Cinta(PAQUETE_5, (126, 47),  4, 1)
+CINTA8 = Cinta(PAQUETE_5, (126, 47),  4, 1, 'DER', 2)
 CINTA7 = Cinta(PAQUETE_4, (77,  46),  4, 1)
-CINTA6 = Cinta(PAQUETE_4, (106, 65),  4, -1)
+CINTA6 = Cinta(PAQUETE_4, (106, 65),  4, -1, 'IZQ', 1)
 CINTA5 = Cinta(PAQUETE_3, (155, 67),  4, -1)
-CINTA4 = Cinta(PAQUETE_3, (126, 86),  4, 1)
+CINTA4 = Cinta(PAQUETE_3, (126, 86),  4, 1, 'DER', 1)
 CINTA3 = Cinta(PAQUETE_2, (77,  86),  4, 1)
-CINTA2 = Cinta(PAQUETE_2, (106, 105), 4, -1)
+CINTA2 = Cinta(PAQUETE_2, (106, 105), 4, -1, 'IZQ', 0)
 CINTA1 = Cinta(PAQUETE_1, (154, 108), 4, -1)
-CINTA0 = Cinta(PAQUETE_1, (217, 108), 3, -1)
+CINTA0 = Cinta(PAQUETE_1, (217, 108), 3, -1, 'DER', 0)
 
 CINTAS = [CINTA0, CINTA1, CINTA2, CINTA3, CINTA4, CINTA5, CINTA6, CINTA7, CINTA8, CINTA9, CINTA10]
 
@@ -256,7 +260,7 @@ class Partida:
 
         # TODO: no se si hacer un método para aplicar la dificultad
         if dificultad == 0:
-            self.cintas = CINTAS[:7]
+            self.cintas = CINTAS[:4] + CINTAS[8:]
             self.puntos_para_subir_numero_paquetes_minimos = 50
             self.repartos_para_quitar_fallo = 3
 
@@ -277,7 +281,7 @@ class Partida:
                 cinta.actualizar_velocidad(1.5)
 
         elif dificultad == 3:
-            self.cintas = CINTAS[:7]
+            self.cintas = CINTAS[:4] + CINTAS[8:]
             self.puntos_para_subir_numero_paquetes_minimos = 20
             self.repartos_para_quitar_fallo = 0
             for cinta in self.cintas:
@@ -305,30 +309,28 @@ class Partida:
         self.camion = Camion()
 
     # Esto comprueba si se cae un paquete
-    def fall_handler(self, numero_cinta: int) -> bool:
-        resto = numero_cinta % 4
-        posicion = None
+    def fall_handler(self, cinta: Cinta) -> bool:
+        jugador = None
+        if cinta.lado == 'DER':
+            jugador = self.mario
+        elif cinta.lado == 'IZQ':
+            jugador = self.luigi
+        else:
+            # No debería llegarse aquí pero si lo hace no pasaría nada
+            return False
 
-        if resto == 0:
-            # Por la derecha
-            posicion = numero_cinta % 3
-        elif resto == 2:
-            # Por la izquierda
-            posicion = (numero_cinta + 1) % 3
+        if jugador.posicion != cinta.nivel:
+            self.paquetes += self.minimo_numero_paquetes
+            self.fallos += 1
+            if self.fallos >= 3:
+                pyxel.quit()
+            return True
 
-        if posicion is not None:
-            jugador = self.mario if resto == 0 else self.luigi
-            if jugador.posicion != posicion:
-                self.paquetes += self.minimo_numero_paquetes
-                self.fallos += 1
-                if self.fallos >= 3:
-                    pyxel.quit()
-                return True
-            else:
-                self.puntos += 1
-                if self.puntos >= self.puntos_para_subir_numero_paquetes_minimos:
-                    self.minimo_numero_paquetes += 1
-                jugador.activar_animacion(self.cintas[numero_cinta].velocidad)
+        else:
+            self.puntos += 1
+            if self.puntos >= self.puntos_para_subir_numero_paquetes_minimos:
+                self.minimo_numero_paquetes += 1
+            jugador.activar_animacion(cinta.velocidad)
 
         return False
 
@@ -350,7 +352,7 @@ class Partida:
         salidas: list[int] = []
         for numero_cinta, cinta in enumerate(self.cintas):
             salida = cinta.avanzar()
-            if salida and not self.fall_handler(numero_cinta):
+            if salida and not self.fall_handler(cinta):
                 salidas.append(numero_cinta)
 
         # Se mueven los paquetes de una cinta a otra
