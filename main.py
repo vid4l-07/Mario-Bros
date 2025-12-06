@@ -82,9 +82,11 @@ class Jugador:
     def update(self) -> None:
         arriba, abajo = self.teclas
         if pyxel.btnp(arriba):
+            self.frame = 0 # Se cancela la animación
             self.posicion = min(self.posicion + 1, len(self.posiciones) - 1)
 
         elif pyxel.btnp(abajo):
+            self.frame = 0 # Se cancela la animación
             self.posicion = max(self.posicion - 1, 0)
 
         if self.frame > 0:
