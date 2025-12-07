@@ -1,17 +1,17 @@
 import pyxel
 import random
 
-from imagen import Imagen
-from jugador import Jugador
-from cinta import Cinta
-from camion import Camion
-from animacion import Animacion
+from src.core.imagen import Imagen
+from src.core.jugador import Jugador
+from src.core.cinta import Cinta
+from src.core.camion import Camion
+from src.core.animacion import Animacion
 
-from recursos.mario import *
-from recursos.luigi import *
-from recursos.cintas import *
+from src.constantes.mario import *
+from src.constantes.luigi import *
+from src.constantes.cintas import *
 
-from configuracion import MAPA_DIMENSIONES
+from src.constantes.configuracion import MAPA_DIMENSIONES
 
 class Partida:
     mapa: Imagen

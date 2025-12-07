@@ -1,5 +1,5 @@
-from animacion import Animacion, Frame
-from imagen import Imagen
+from src.core.animacion import Animacion, Frame
+from src.core.imagen import Imagen
 
 ANIMACION_JEFE_MARIO_FRAME_1_1 = Frame(Imagen(2, (226, 72), (16, 29)), (222, 64))
 ANIMACION_JEFE_MARIO_FRAME_1_2 = Frame(Imagen(2, (207, 74), (18, 27)), (205, 66))

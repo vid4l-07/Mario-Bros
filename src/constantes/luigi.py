@@ -1,4 +1,4 @@
-from imagen import Imagen
+from src.core.imagen import Imagen
 
 LUIGI_1_1 = Imagen(2, (88, 184), (19, 27))
 LUIGI_1_2 = Imagen(2, (112, 184), (22, 27))

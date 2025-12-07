@@ -1,9 +1,9 @@
 import pyxel
 
-from menu import Menu
-from partida import Partida
+from src.core.menu import Menu
+from src.core.partida import Partida
 
-from configuracion import MAPA_DIMENSIONES
+from src.constantes.configuracion import MAPA_DIMENSIONES
 
 class Juego:
     menu: Menu
@@ -15,7 +15,7 @@ class Juego:
 
         MAPA_ANCHO, MAPA_ALTO = MAPA_DIMENSIONES
         pyxel.init(MAPA_ANCHO, MAPA_ALTO)
-        pyxel.load('assets/my_resource.pyxres')
+        pyxel.load('../../assets/my_resource.pyxres')
         pyxel.run(self.update, self.draw)
 
     def update(self):

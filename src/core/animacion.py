@@ -1,4 +1,4 @@
-from imagen import Imagen
+from src.core.imagen import Imagen
 
 # Una clase para encapsular una imagen junto a una posición
 class Frame:

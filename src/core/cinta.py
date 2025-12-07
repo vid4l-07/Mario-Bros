@@ -1,4 +1,4 @@
-from imagen import Imagen
+from src.core.imagen import Imagen
 
 # TODO: Imagen de caida
 class Cinta:

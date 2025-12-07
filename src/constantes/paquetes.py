@@ -1,4 +1,4 @@
-from imagen import Imagen
+from src.core.imagen import Imagen
 
 PAQUETE_1 = Imagen(2, (135, 116), (9, 4))
 PAQUETE_2 = Imagen(2, (109, 113), (9, 7))

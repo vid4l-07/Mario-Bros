@@ -1,6 +1,6 @@
 import pyxel
-from imagen import Imagen
-from animacion import Animacion
+from src.core.imagen import Imagen
+from src.core.animacion import Animacion
 
 class Jugador:
     posiciones: list[tuple[int, int]]

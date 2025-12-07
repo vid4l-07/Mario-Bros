@@ -1,5 +1,5 @@
-from imagen import Imagen
-from recursos.paquetes import PAQUETE_6
+from src.core.imagen import Imagen
+from src.constantes.paquetes import PAQUETE_6
 
 class Camion:
     paquetes: int

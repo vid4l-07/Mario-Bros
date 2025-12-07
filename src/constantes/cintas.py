@@ -1,4 +1,4 @@
-from cinta import Cinta
+from src.core.cinta import Cinta
 from .paquetes import *
 
 CINTA10 = Cinta(PAQUETE_6, (106, 28), 4, -1, 'IZQ', 2)
