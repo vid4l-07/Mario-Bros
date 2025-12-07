@@ -14,4 +14,3 @@ PAQUETE_6 = Imagen(2, (109, 36), (9, 9))
 # PAQUETE_5_CAIDA = Imagen(2, (0, 184), (12, 12))
 # PAQUETE_6_CAIDA = Imagen(2, (16, 184), (13, 13))
 
-MAPA_DIMENSIONES = (240, 136)

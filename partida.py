@@ -1,42 +1,17 @@
 import pyxel
 import random
+
 from imagen import Imagen
 from jugador import Jugador
-from cinta import Cinta, CINTAS
+from cinta import Cinta
 from camion import Camion
-from animacion import Animacion, Frame
-from constantes import *
+from animacion import Animacion
 
-ANIMACION_JEFE_MARIO_FRAME_1_1 = Frame(Imagen(2, (226, 72), (16, 29)), (222, 64))
-ANIMACION_JEFE_MARIO_FRAME_1_2 = Frame(Imagen(2, (207, 74), (18, 27)), (205, 66))
+from recursos.mario import *
+from recursos.luigi import *
+from recursos.cintas import *
 
-ANIMACION_JEFE_MARIO_FRAME_2_1 = Frame(Imagen(2, (52, 220), (16, 29)), (222, 64))
-ANIMACION_JEFE_MARIO_FRAME_2_2 = Frame(Imagen(2, (32, 220), (14, 27)), (205, 66))
-
-ANIMACION_JEFE_MARIO = Animacion([
-    [ANIMACION_JEFE_MARIO_FRAME_1_1, ANIMACION_JEFE_MARIO_FRAME_1_2],
-    [ANIMACION_JEFE_MARIO_FRAME_2_1, ANIMACION_JEFE_MARIO_FRAME_2_2],
-])
-
-MARIO_1_1 = Imagen(2, (32, 152), (39, 26))
-MARIO_1_2 = Imagen(2, (77, 152), (27, 27))
-MARIO_2_1 = Imagen(2, (62, 190), (20, 25))
-MARIO_2_2 = Imagen(2, (34, 186), (22, 29))
-MARIO_3_1 = Imagen(2, (111, 152), (21, 27))
-MARIO_3_2 = Imagen(2, (133, 152), (21, 27))
-
-LUIGI_1_1 = Imagen(2, (88, 184), (19, 27))
-LUIGI_1_2 = Imagen(2, (112, 184), (22, 27))
-LUIGI_2_1 = Imagen(2, (158, 184), (17, 29))
-LUIGI_2_2 = Imagen(2, (138, 184), (19, 29))
-LUIGI_3_1 = Imagen(2, (203, 149), (43, 32))
-LUIGI_3_2 = Imagen(2, (159, 149), (26, 32))
-
-MARIO_POSICIONES = [(160, 129), (163, 94), (165, 54)]
-LUIGI_POSICIONES = [(54, 112), (57, 76), (30, 38)]
-
-ANIMACIONES_MARIO = [(MARIO_1_1, MARIO_1_2), (MARIO_2_1, MARIO_2_2), (MARIO_3_1, MARIO_3_2)]
-ANIMACIONES_LUIGI = [(LUIGI_1_1, LUIGI_1_2), (LUIGI_2_1, LUIGI_2_2), (LUIGI_3_1, LUIGI_3_2)]
+from configuracion import MAPA_DIMENSIONES
 
 class Partida:
     mapa: Imagen

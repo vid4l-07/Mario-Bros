@@ -1,5 +1,5 @@
 from imagen import Imagen
-from constantes import *
+from recursos.paquetes import PAQUETE_6
 
 class Camion:
     paquetes: int

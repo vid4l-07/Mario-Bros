@@ -1,7 +1,9 @@
 import pyxel
+
 from menu import Menu
 from partida import Partida
-from constantes import *
+
+from configuracion import MAPA_DIMENSIONES
 
 class Juego:
     menu: Menu
