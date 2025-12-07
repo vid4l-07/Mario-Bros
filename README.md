@@ -7,7 +7,7 @@ Principal:
  - [x] Animaciones de los personajes
  - [ ] Jefes
  - [x] Puntos
- - [ ] Camión
+ - [x] Camión
 
 Secundario:
  - [x] Simplificar la clase Cinta

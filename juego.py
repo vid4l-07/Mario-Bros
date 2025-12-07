@@ -13,7 +13,7 @@ class Juego:
 
         MAPA_ANCHO, MAPA_ALTO = MAPA_DIMENSIONES
         pyxel.init(MAPA_ANCHO, MAPA_ALTO)
-        pyxel.load('my_resource.pyxres')
+        pyxel.load('assets/my_resource.pyxres')
         pyxel.run(self.update, self.draw)
 
     def update(self):
