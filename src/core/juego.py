@@ -6,12 +6,12 @@ from src.core.partida import Partida
 from src.constantes.configuracion import MAPA_DIMENSIONES
 
 class Juego:
-    menu: Menu
-    partida: None | Partida
+    __menu: Menu
+    __partida: None | Partida
 
     def __init__(self):
-        self.menu = Menu(['Facil', 'Medio', 'Extremo', 'Crazy'])
-        self.partida = Partida(0)
+        self.__menu = Menu(['Facil', 'Medio', 'Extremo', 'Crazy'])
+        self.__partida = Partida(0)
 
         MAPA_ANCHO, MAPA_ALTO = MAPA_DIMENSIONES
         pyxel.init(MAPA_ANCHO, MAPA_ALTO)
@@ -24,18 +24,18 @@ class Juego:
             pyxel.quit()
 
         # Si se está usando el menú no se actualiza el estado del resto del juego
-        seleccion = self.menu.update()
+        seleccion = self.__menu.update()
         if seleccion != None:
             # Se crea una nueva partida con los valores de la nueva dificultad
-            self.partida = Partida(seleccion)
-        if self.menu.visible:
+            self.__partida = Partida(seleccion)
+        if self.__menu.visible:
             return
 
-        if self.partida != None:
-            self.partida.update()
+        if self.__partida != None:
+            self.__partida.update()
 
     def draw(self):
         pyxel.cls(7)
-        if self.partida != None:
-            self.partida.draw()
-        self.menu.draw()
+        if self.__partida != None:
+            self.__partida.draw()
+        self.__menu.draw()

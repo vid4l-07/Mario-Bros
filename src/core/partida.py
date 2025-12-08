@@ -46,23 +46,23 @@ class Partida:
             self.puntos_para_subir_numero_paquetes_minimos = 30
             self.repartos_para_quitar_fallo = 5
             for cinta in self.cintas[1::2]:
-                cinta.actualizar_velocidad(1.5)
+                cinta.velocidad = 1.5
 
         elif dificultad == 2:
             self.cintas = CINTAS
             self.puntos_para_subir_numero_paquetes_minimos = 30
             self.repartos_para_quitar_fallo = 5
             for cinta in self.cintas[1::2]:
-                cinta.actualizar_velocidad(2)
+                cinta.velocidad = 2
             for cinta in self.cintas[2::2]:
-                cinta.actualizar_velocidad(1.5)
+                cinta.velocidad = 1.5
 
         elif dificultad == 3:
             self.cintas = CINTAS[:4] + CINTAS[8:]
             self.puntos_para_subir_numero_paquetes_minimos = 20
             self.repartos_para_quitar_fallo = 0
             for cinta in self.cintas:
-                cinta.actualizar_velocidad(random.uniform(1, 2))
+                cinta.velocidad = random.uniform(1, 2)
             mario_arriba = pyxel.KEY_DOWN
             mario_abajo = pyxel.KEY_UP
             luigi_arriba = pyxel.KEY_S
@@ -86,7 +86,7 @@ class Partida:
         self.camion = Camion()
 
     # Esto comprueba si se cae un paquete
-    def fall_handler(self, cinta: Cinta) -> bool:
+    def __fall_handler(self, cinta: Cinta) -> bool:
         jugador = None
         if cinta.lado == 'DER':
             jugador = self.mario
@@ -136,7 +136,7 @@ class Partida:
         salidas: list[int] = []
         for numero_cinta, cinta in enumerate(self.cintas):
             salida = cinta.avanzar()
-            if salida and not self.fall_handler(cinta):
+            if salida and not self.__fall_handler(cinta):
                 salidas.append(numero_cinta)
 
         # Se mueven los paquetes de una cinta a otra

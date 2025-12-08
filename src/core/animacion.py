@@ -2,46 +2,46 @@ from src.core.imagen import Imagen
 
 # Una clase para encapsular una imagen junto a una posición
 class Frame:
-    imagen: Imagen
-    posicion: tuple[int, int]
+    __imagen: Imagen
+    __posicion: tuple[int, int]
 
     def __init__(self, imagen: Imagen, posicion: tuple[int, int]):
-        self.imagen = imagen
-        self.posicion = posicion
+        self.__imagen = imagen
+        self.__posicion = posicion
 
     def draw(self):
-        self.imagen.draw(self.posicion)
+        self.__imagen.draw(self.__posicion)
 
 # Estas animaciones son más largas y requieren parar el juego
 class Animacion:
-    secuencia: list[list[Frame]]
-    contador_secuencia: int
+    __secuencia: list[list[Frame]]
+    __contador_secuencia: int
     activo: bool
-    frame: int
+    __frame: int
 
     def __init__(self, secuencia: list[list[Frame]]):
-        self.secuencia = secuencia
-        self.contador_secuencia = 0
+        self.__secuencia = secuencia
+        self.__contador_secuencia = 0
         self.activo = False
-        self.frame = 0
+        self.__frame = 0
 
     def update(self):
         if not self.activo:
             return
 
-        if self.frame < 30:
-            self.frame += 1
+        if self.__frame < 30:
+            self.__frame += 1
             return
-        self.frame = 0 
+        self.__frame = 0 
 
-        self.contador_secuencia += 1
+        self.__contador_secuencia += 1
 
-        if self.contador_secuencia >= len(self.secuencia):
+        if self.__contador_secuencia >= len(self.__secuencia):
             self.activo = False
-            self.contador_secuencia = 0
+            self.__contador_secuencia = 0
             return
 
     def draw(self):
-        for frame in self.secuencia[self.contador_secuencia]:
+        for frame in self.__secuencia[self.__contador_secuencia]:
             frame.draw()
 
