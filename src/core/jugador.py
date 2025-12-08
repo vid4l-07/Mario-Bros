@@ -1,6 +1,5 @@
 import pyxel
 from src.core.imagen import Imagen
-from src.core.animacion import Animacion
 
 class Jugador:
     __posiciones: list[tuple[int, int]]
@@ -10,17 +9,12 @@ class Jugador:
     __animaciones: list[tuple[Imagen, Imagen]]
     __imagen: Imagen
     __frame: int
-    __animacion_jefe: Animacion
 
     @property
     def posicion(self) -> int:
         return self.__posicion
 
-    @property
-    def animacion_jefe(self) -> Animacion:
-        return self.__animacion_jefe
-
-    def __init__(self, posiciones: list[tuple[int, int]], animaciones: list[tuple[Imagen, Imagen]], teclas: tuple[int, int], animacion_jefe: Animacion):
+    def __init__(self, posiciones: list[tuple[int, int]], animaciones: list[tuple[Imagen, Imagen]], teclas: tuple[int, int]):
         self.__posiciones = posiciones
         self.__posicion = 0
         self.__teclas = teclas
@@ -30,8 +24,6 @@ class Jugador:
         self.__imagen = self.__animaciones[self.__posicion][self.__animacion]
 
         self.__frame = 0
-
-        self.__animacion_jefe = animacion_jefe
 
     # Se llama cuando el personaje mueve un paquete. Esta función recive la
     # velocidad de la cinta desde la que el personaje coge el paquete. Esto

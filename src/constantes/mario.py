@@ -1,16 +1,4 @@
-from src.core.animacion import Animacion, Frame
 from src.core.imagen import Imagen
-
-ANIMACION_JEFE_MARIO_FRAME_1_1 = Frame(Imagen(2, (226, 72), (16, 29)), (222, 64))
-ANIMACION_JEFE_MARIO_FRAME_1_2 = Frame(Imagen(2, (207, 74), (18, 27)), (205, 66))
-
-ANIMACION_JEFE_MARIO_FRAME_2_1 = Frame(Imagen(2, (52, 220), (16, 29)), (222, 64))
-ANIMACION_JEFE_MARIO_FRAME_2_2 = Frame(Imagen(2, (32, 220), (14, 27)), (205, 66))
-
-ANIMACION_JEFE_MARIO = Animacion([
-    [ANIMACION_JEFE_MARIO_FRAME_1_1, ANIMACION_JEFE_MARIO_FRAME_1_2],
-    [ANIMACION_JEFE_MARIO_FRAME_2_1, ANIMACION_JEFE_MARIO_FRAME_2_2],
-])
 
 MARIO_1_1 = Imagen(2, (32, 152), (39, 26))
 MARIO_1_2 = Imagen(2, (77, 152), (27, 27))

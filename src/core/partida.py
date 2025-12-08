@@ -5,7 +5,6 @@ from src.core.imagen import Imagen
 from src.core.jugador import Jugador
 from src.core.cinta import Cinta
 from src.core.camion import Camion
-from src.core.animacion import Animacion
 
 from src.constantes.mario import *
 from src.constantes.luigi import *
@@ -27,7 +26,6 @@ class Partida:
     fallos: int
     repartos: int
     camion: Camion
-    animacion: Animacion | None
 
     def __init__(self, dificultad: int):
         mario_arriba = pyxel.KEY_UP
@@ -78,11 +76,10 @@ class Partida:
         self.puntos = 0
         self.fallos = 0
         self.repartos = 0
-        self.animacion = None
 
         self.mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
-        self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo), ANIMACION_JEFE_MARIO)
-        self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo), ANIMACION_JEFE_MARIO)
+        self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
+        self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
         self.camion = Camion()
 
     # Esto comprueba si se cae un paquete
@@ -97,9 +94,6 @@ class Partida:
             return False
 
         if jugador.posicion != cinta.nivel:
-            jugador.animacion_jefe.activo = True
-            self.animacion = jugador.animacion_jefe
-
             self.paquetes += self.minimo_numero_paquetes
             self.fallos += 1
             if self.fallos >= 3:
@@ -115,10 +109,6 @@ class Partida:
         return False
 
     def update(self):
-        if self.animacion and self.animacion.activo:
-            self.animacion.update()
-            return
-
         # Generación de paquetes
         if self.frame == 0:
             self.frame = 60
@@ -161,16 +151,13 @@ class Partida:
     def draw(self):
         # El orden es importante
 
-        if self.animacion == None or not self.animacion.activo:
-            for cinta in self.cintas:
-                cinta.draw()
-            self.camion.draw()
-            self.mapa.draw((0, 0))
-            self.mario.draw()
-            self.luigi.draw()
-        elif self.animacion.activo:
-            self.mapa.draw((0, 0))
-            self.animacion.draw()
+        for cinta in self.cintas:
+            cinta.draw()
+
+        self.camion.draw()
+        self.mapa.draw((0, 0))
+        self.mario.draw()
+        self.luigi.draw()
 
         pyxel.text(50, 5, 'Puntos: ' + str(self.puntos), 0)
         pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)

@@ -1,5 +1,7 @@
 from src.core.imagen import Imagen
+
 from src.constantes.paquetes import PAQUETE_6
+from src.constantes.camion import CAMION
 
 class Camion:
     __paquetes: int
@@ -7,7 +9,7 @@ class Camion:
 
     def __init__(self):
         self.__paquetes = 0
-        self.__imagen = Imagen(2, (180, 184), (36, 41))
+        self.__imagen = CAMION
 
     def añadir_paquete(self) -> bool:
         self.__paquetes += 1

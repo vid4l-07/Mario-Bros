@@ -3,14 +3,14 @@ import pyxel
 from src.core.menu import Menu
 from src.core.partida import Partida
 
-from src.constantes.configuracion import MAPA_DIMENSIONES
+from src.constantes.configuracion import MAPA_DIMENSIONES, MENU_DIFICULTAD
 
 class Juego:
     __menu: Menu
     __partida: None | Partida
 
     def __init__(self):
-        self.__menu = Menu(['Facil', 'Medio', 'Extremo', 'Crazy'])
+        self.__menu = Menu(MENU_DIFICULTAD)
         self.__partida = Partida(0)
 
         MAPA_ANCHO, MAPA_ALTO = MAPA_DIMENSIONES
