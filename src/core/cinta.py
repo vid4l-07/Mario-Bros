@@ -1,6 +1,5 @@
 from src.core.imagen import Imagen
 
-# TODO: Imagen de caida
 class Cinta:
     __imagen_paquete: Imagen
     __paquetes: list[int]
@@ -20,8 +19,10 @@ class Cinta:
     def nivel(self) -> int | None:
         return self.__nivel
 
-    def __init__(self, imagen_paquete: Imagen, inicio: tuple[int, int], pasos: int, direccion: int, lado: str | None = None, nivel: int | None = None):
-        self.__imagen_paquete = imagen_paquete
+    def __init__(self, imagen_paquete: Imagen, imagen_caida: Imagen, inicio: tuple[int, int], pasos: int, direccion: int, lado: str | None = None, nivel: int | None = None):
+        self.__dibujar_paquete = imagen_paquete
+        self.__imagen_caida = imagen_caida
+        self.__imagen_paquete = self.__dibujar_paquete
         self.__paquetes = []
         self.__inicio = inicio
         self.__velocidad = 20
@@ -32,6 +33,7 @@ class Cinta:
         self.__nivel = nivel
 
     def añadir_paquete(self):
+        self.__dibujar_paquete = self.__imagen_paquete
         self.__paquetes.append(0)
 
     def eliminar_paquetes(self):
@@ -48,7 +50,7 @@ class Cinta:
     def draw(self):
         x, y = self.__inicio
         for paquete in self.__paquetes:
-            self.__imagen_paquete.draw((x + (paquete * 11 * self.__direccion), y))
+            self.__dibujar_paquete.draw((x + (paquete * 11 * self.__direccion), y))
 
     def caida(self) -> bool:
         return any(paso >= self.__pasos for paso in self.__paquetes)
@@ -66,6 +68,9 @@ class Cinta:
             nuevo = paquete + 1
             if nuevo < self.__pasos:
                 nuevos.append(nuevo)
+                if nuevo == self.__pasos - 1 and self.__nivel != None:
+                    self.__dibujar_paquete = self.__imagen_caida
+
             else:
                 salida = True
 
