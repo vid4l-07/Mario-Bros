@@ -5,6 +5,7 @@ from src.core.imagen import Imagen
 from src.core.jugador import Jugador
 from src.core.cinta import Cinta
 from src.core.camion import Camion
+from src.core.jefe import Jefe
 
 from src.constantes.mario import *
 from src.constantes.luigi import *
@@ -80,6 +81,7 @@ class Partida:
         self.mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
         self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
         self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
+        self.jefe = Jefe()
         self.camion = Camion()
 
     # Esto comprueba si se cae un paquete
@@ -87,8 +89,10 @@ class Partida:
         jugador = None
         if cinta.lado == 'DER':
             jugador = self.mario
+            numero = 0
         elif cinta.lado == 'IZQ':
             jugador = self.luigi
+            numero = 1
         else:
             # No debería llegarse aquí pero si lo hace no pasaría nada
             return False
@@ -96,6 +100,9 @@ class Partida:
         if jugador.posicion != cinta.nivel:
             self.paquetes += self.minimo_numero_paquetes
             self.fallos += 1
+            self.jefe.pause = True
+            self.jefe.jugador = numero
+
             if self.fallos >= 3:
                 pyxel.quit()
             return True
@@ -109,6 +116,8 @@ class Partida:
         return False
 
     def update(self):
+        if self.jefe.pause:
+            return
         # Generación de paquetes
         if self.frame == 0:
             self.frame = 60
@@ -150,15 +159,16 @@ class Partida:
 
     def draw(self):
         # El orden es importante
+        if self.jefe.pause:
+            self.jefe.animacion()
+        else:
+            for cinta in self.cintas:
+                cinta.draw()
 
-        for cinta in self.cintas:
-            cinta.draw()
+            self.camion.draw()
+            self.mapa.draw((0, 0))
+            self.mario.draw()
+            self.luigi.draw()
 
-        self.camion.draw()
-        self.mapa.draw((0, 0))
-        self.mario.draw()
-        self.luigi.draw()
-
-        pyxel.text(50, 5, 'Puntos: ' + str(self.puntos), 0)
-        pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)
-
+            pyxel.text(50, 5, 'Puntos: ' + str(self.puntos), 0)
+            pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)
