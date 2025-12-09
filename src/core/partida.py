@@ -14,19 +14,20 @@ from src.constantes.cintas import *
 from src.constantes.configuracion import MAPA_DIMENSIONES
 
 class Partida:
-    mapa: Imagen
-    mario: Jugador
-    luigi: Jugador
-    cintas: list[Cinta]
-    minimo_numero_paquetes: int
-    puntos_para_subir_numero_paquetes_minimos: int
-    repartos_para_quitar_fallo: int
-    paquetes: int
-    frame: int
-    puntos: int
-    fallos: int
-    repartos: int
-    camion: Camion
+    __mapa: Imagen
+    __mario: Jugador
+    __luigi: Jugador
+    __cintas: list[Cinta]
+    __minimo_numero_paquetes: int
+    __puntos_para_subir_numero_paquetes_minimos: int
+    __repartos_para_quitar_fallo: int
+    __paquetes: int
+    __frame: int
+    __puntos: int
+    __fallos: int
+    __repartos: int
+    __camion: Camion
+    __jefe: Jefe
 
     def __init__(self, dificultad: int):
         mario_arriba = pyxel.KEY_UP
@@ -36,31 +37,31 @@ class Partida:
 
         # TODO: no se si hacer un método para aplicar la dificultad
         if dificultad == 0:
-            self.cintas = CINTAS[:4] + CINTAS[8:]
-            self.puntos_para_subir_numero_paquetes_minimos = 50
-            self.repartos_para_quitar_fallo = 3
+            self.__cintas = CINTAS[:4] + CINTAS[8:]
+            self.__puntos_para_subir_numero_paquetes_minimos = 50
+            self.__repartos_para_quitar_fallo = 3
 
         elif dificultad == 1:
-            self.cintas = CINTAS
-            self.puntos_para_subir_numero_paquetes_minimos = 30
-            self.repartos_para_quitar_fallo = 5
-            for cinta in self.cintas[1::2]:
+            self.__cintas = CINTAS
+            self.__puntos_para_subir_numero_paquetes_minimos = 30
+            self.__repartos_para_quitar_fallo = 5
+            for cinta in self.__cintas[1::2]:
                 cinta.velocidad = 1.5
 
         elif dificultad == 2:
-            self.cintas = CINTAS
-            self.puntos_para_subir_numero_paquetes_minimos = 30
-            self.repartos_para_quitar_fallo = 5
-            for cinta in self.cintas[1::2]:
+            self.__cintas = CINTAS
+            self.__puntos_para_subir_numero_paquetes_minimos = 30
+            self.__repartos_para_quitar_fallo = 5
+            for cinta in self.__cintas[1::2]:
                 cinta.velocidad = 2
-            for cinta in self.cintas[2::2]:
+            for cinta in self.__cintas[2::2]:
                 cinta.velocidad = 1.5
 
         elif dificultad == 3:
-            self.cintas = CINTAS[:4] + CINTAS[8:]
-            self.puntos_para_subir_numero_paquetes_minimos = 20
-            self.repartos_para_quitar_fallo = 0
-            for cinta in self.cintas:
+            self.__cintas = CINTAS[:4] + CINTAS[8:]
+            self.__puntos_para_subir_numero_paquetes_minimos = 20
+            self.__repartos_para_quitar_fallo = 0
+            for cinta in self.__cintas:
                 cinta.velocidad = random.uniform(1, 2)
             mario_arriba = pyxel.KEY_DOWN
             mario_abajo = pyxel.KEY_UP
@@ -68,107 +69,108 @@ class Partida:
             luigi_abajo = pyxel.KEY_W
 
         # Limpiar las cintas
-        for cinta in self.cintas:
+        for cinta in self.__cintas:
             cinta.eliminar_paquetes()
 
-        self.minimo_numero_paquetes = 1
-        self.paquetes = 1
-        self.frame = 0
-        self.puntos = 0
-        self.fallos = 0
-        self.repartos = 0
+        self.__minimo_numero_paquetes = 1
+        self.__paquetes = 1
+        self.__frame = 0
+        self.__puntos = 0
+        self.__fallos = 0
+        self.__repartos = 0
 
-        self.mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
-        self.mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
-        self.luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
-        self.jefe = Jefe()
-        self.camion = Camion()
+        self.__mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
+        self.__mario = Jugador(MARIO_POSICIONES, ANIMACIONES_MARIO, (mario_arriba, mario_abajo))
+        self.__luigi = Jugador(LUIGI_POSICIONES, ANIMACIONES_LUIGI, (luigi_arriba, luigi_abajo))
+        self.__jefe = Jefe()
+        self.__camion = Camion()
 
     # Esto comprueba si se cae un paquete
     def __fall_handler(self, cinta: Cinta) -> bool:
         jugador = None
         if cinta.lado == 'DER':
-            jugador = self.mario
+            jugador = self.__mario
             numero = 0
         elif cinta.lado == 'IZQ':
-            jugador = self.luigi
+            jugador = self.__luigi
             numero = 1
         else:
             # No debería llegarse aquí pero si lo hace no pasaría nada
             return False
 
         if jugador.posicion != cinta.nivel:
-            self.paquetes += self.minimo_numero_paquetes
-            self.fallos += 1
-            self.jefe.pause = True
-            self.jefe.jugador = numero
+            self.__paquetes += self.__minimo_numero_paquetes
+            self.__fallos += 1
+            self.__jefe.pause = True
+            self.__jefe.jugador = numero
 
-            if self.fallos >= 3:
+            if self.__fallos >= 3:
                 pyxel.quit()
             return True
 
         else:
-            self.puntos += 1
-            if self.puntos >= self.puntos_para_subir_numero_paquetes_minimos:
-                self.minimo_numero_paquetes += 1
+            self.__puntos += 1
+            if self.__puntos >= self.__puntos_para_subir_numero_paquetes_minimos:
+                self.__minimo_numero_paquetes += 1
             jugador.activar_animacion(cinta.velocidad)
 
         return False
 
     def update(self):
-        if self.jefe.pause:
+        if self.__jefe.pause:
             return
-        # Generación de paquetes
-        if self.frame == 0:
-            self.frame = 60
-            if self.paquetes > 0:
-                self.paquetes -= 1
-                self.cintas[0].añadir_paquete()
 
-        self.frame -= 1
+        # Generación de paquetes
+        if self.__frame == 0:
+            self.__frame = 60
+            if self.__paquetes > 0:
+                self.__paquetes -= 1
+                self.__cintas[0].añadir_paquete()
+
+        self.__frame -= 1
 
         # Actualizamos el estado de los jugadores
-        self.mario.update()
-        self.luigi.update()
+        self.__mario.update()
+        self.__luigi.update()
 
         # Las cintas avanzan
         salidas: list[int] = []
-        for numero_cinta, cinta in enumerate(self.cintas):
+        for numero_cinta, cinta in enumerate(self.__cintas):
             salida = cinta.avanzar()
             if salida and not self.__fall_handler(cinta):
                 salidas.append(numero_cinta)
 
         # Se mueven los paquetes de una cinta a otra
         for numero_cinta in salidas:
-            if numero_cinta + 1 < len(self.cintas):
-                self.cintas[numero_cinta + 1].añadir_paquete()
+            if numero_cinta + 1 < len(self.__cintas):
+                self.__cintas[numero_cinta + 1].añadir_paquete()
             else:
                 # Cada vez que un paquete llega al final
-                if self.camion.añadir_paquete():
-                    self.repartos += 1
-                    if self.repartos == self.repartos_para_quitar_fallo:
-                        self.repartos_para_quitar_fallo = 0
-                        self.fallos = max(0 , self.fallos - 1)
+                if self.__camion.añadir_paquete():
+                    self.__repartos += 1
+                    if self.__repartos == self.__repartos_para_quitar_fallo:
+                        self.__repartos_para_quitar_fallo = 0
+                        self.__fallos = max(0 , self.__fallos - 1)
                     # Actualizar el mínimo de paquetes
-                    self.puntos += 10
-                    if self.puntos == self.puntos_para_subir_numero_paquetes_minimos:
-                        self.minimo_numero_paquetes += 1
+                    self.__puntos += 10
+                    if self.__puntos == self.__puntos_para_subir_numero_paquetes_minimos:
+                        self.__minimo_numero_paquetes += 1
 
                 # Generar más paquetes
-                self.paquetes += self.minimo_numero_paquetes
+                self.__paquetes += self.__minimo_numero_paquetes
 
     def draw(self):
         # El orden es importante
-        if self.jefe.pause:
-            self.jefe.animacion()
+        if self.__jefe.pause:
+            self.__jefe.animacion()
         else:
-            for cinta in self.cintas:
+            for cinta in self.__cintas:
                 cinta.draw()
 
-            self.camion.draw()
-            self.mapa.draw((0, 0))
-            self.mario.draw()
-            self.luigi.draw()
+            self.__camion.draw()
+            self.__mapa.draw((0, 0))
+            self.__mario.draw()
+            self.__luigi.draw()
 
-            pyxel.text(50, 5, 'Puntos: ' + str(self.puntos), 0)
-            pyxel.text(150, 5, 'Fallos: ' + str(self.fallos), 0)
+            pyxel.text(50, 5, 'Puntos: ' + str(self.__puntos), 0)
+            pyxel.text(150, 5, 'Fallos: ' + str(self.__fallos), 0)

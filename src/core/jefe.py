@@ -5,6 +5,14 @@ from src.constantes.configuracion import MAPA_DIMENSIONES
 from src.constantes.jefe import *
 
 class Jefe:
+    pause: bool
+    frame: int
+    mapa: Imagen
+    indice_anim: int
+    jugador: int
+    posicion: tuple[int, int]
+    jefe: tuple[Imagen, Imagen]
+
     def __init__(self) -> None:
         self.pause = False
         self.frame = 0
@@ -16,11 +24,7 @@ class Jefe:
         self.jefe = ANIMACIONES_JEFE[0]
 
     def toggle_animation(self):
-        if self.indice_anim == 0:
-            self.indice_anim = 1
-        elif self.indice_anim == 1:
-            self.indice_anim = 0
-
+        self.indice_anim = not self.indice_anim
 
     def animacion(self):
         if self.jugador == 0:
