@@ -8,38 +8,36 @@ class Jefe:
     __frame: int
     __mapa: Imagen
     __indice_anim: int
-    __posicion: tuple[int, int]
-    __jefe: tuple[Imagen, Imagen]
+    __posiciones: tuple[tuple[int,int], tuple[int,int]]
 
     def __init__(self) -> None:
         self.__frame = 0
         self.__mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
         self.pause = False   # atributo para parar el juego
         self.jugador = 1   # atrubuto para distinguir entre mario y luigi
+        self.__posiciones = ((200,64), (1,101))
 
-        # declarar atributos
+        # indice inicial
         self.__indice_anim = 0
-        self.__posicion = (200,64)
-        self.__jefe = ANIMACIONES_JEFE[0]
 
     def toggle_animation(self):
         self.__indice_anim = not self.__indice_anim
 
     def animacion(self):
         # comprueba si el que ha fallado es mario o luigi
-        if self.jugador == 0:
-            self.__posicion = (200,64)
-            self.__jefe = ANIMACIONES_JEFE[0]
-        elif self.jugador == 1:
-            self.__posicion = (1,101)
-            self.__jefe = ANIMACIONES_JEFE[1]
+        posicion = self.__posiciones[self.jugador]
+        jefe = ANIMACIONES_JEFE[self.jugador]
+
         pyxel.cls(7)
         self.__mapa.draw((0,0))
-        self.__jefe[self.__indice_anim].draw(self.__posicion)   # pinta la animacion del jefe dependiendo de di es mario o luigi  // el indice anim solo sirve para que empiece arriba
+
+        jefe[self.__indice_anim].draw(posicion)   # pinta la animacion del jefe dependiendo de si es mario o luigi
+
+        self.__frame += 1
         if self.__frame % 20 == 0:   # la animacion cambia cada 20 frames
             self.toggle_animation()
-        self.__frame += 1
-        if self.__frame >= 100:
+
+        if self.__frame >= 100:   # reanuda el juego
             self.pause = False
             self.__frame = 0
 
