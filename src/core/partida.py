@@ -116,6 +116,17 @@ class Partida:
 
         return False
 
+    def __entregar_paquete(self):
+        if self.__camion.añadir_paquete():
+            self.__repartos += 1
+            if self.__repartos == self.__repartos_para_quitar_fallo:
+                self.__repartos_para_quitar_fallo = 0
+                self.__fallos = max(0 , self.__fallos - 1)
+            # Actualizar el mínimo de paquetes
+            self.__puntos += 10
+            if self.__puntos == self.__puntos_para_subir_numero_paquetes_minimos:
+                self.__minimo_numero_paquetes += 1
+
     def update(self):
         if self.__jefe.pause:
             return
@@ -146,15 +157,7 @@ class Partida:
                 self.__cintas[numero_cinta + 1].añadir_paquete()
             else:
                 # Cada vez que un paquete llega al final
-                if self.__camion.añadir_paquete():
-                    self.__repartos += 1
-                    if self.__repartos == self.__repartos_para_quitar_fallo:
-                        self.__repartos_para_quitar_fallo = 0
-                        self.__fallos = max(0 , self.__fallos - 1)
-                    # Actualizar el mínimo de paquetes
-                    self.__puntos += 10
-                    if self.__puntos == self.__puntos_para_subir_numero_paquetes_minimos:
-                        self.__minimo_numero_paquetes += 1
+                self.__entregar_paquete()
 
                 # Generar más paquetes
                 self.__paquetes += self.__minimo_numero_paquetes
