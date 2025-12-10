@@ -13,8 +13,8 @@ class Jefe:
     def __init__(self) -> None:
         self.__frame = 0
         self.__mapa = Imagen(1, (0, 0), MAPA_DIMENSIONES)
-        self.pause = False   # atributo para parar el juego
-        self.jugador = 1   # atrubuto para distinguir entre mario y luigi
+        self.__pause = False   # atributo para parar el juego
+        self.__jugador = 1   # atrubuto para distinguir entre mario y luigi
         self.__posiciones = ((200,64), (1,101))
 
         # indice inicial
@@ -44,18 +44,17 @@ class Jefe:
     @property
     def pause(self):
         return self.__pause
+
     @pause.setter
-    def pause(self,value):
-        if type(value) == bool:
-            self.__pause = value
-        else:
-            raise TypeError("El atributo jefe.pause tiene que ser bool")
+    def pause(self, value: bool):
+        self.__pause = value
 
     @property
     def jugador(self):
         return self.__jugador
+
     @jugador.setter
-    def jugador(self,value):
+    def jugador(self, value: int):
         if value == 0 or value == 1:
             self.__jugador = value
         else:
