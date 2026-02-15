@@ -1,7 +1,68 @@
 # Super Mario Bros – Pyxel
 
-Este proyecto implementa un juego arcade 2D desarrollado con Pyxel, en el que Mario y Luigi trabajan en una fábrica transportando paquetes a lo largo de cintas mecánicas hasta un camión. El jugador debe coordinar correctamente la posición de ambos personajes para evitar que los paquetes caigan y lograr la mayor puntuación posible.
+Este proyecto implementa un juego arcade 2D desarrollado con Pyxel.
 
+## Instalacion
+Clona este repositorio.
+
+Instala Pyxel:
+```bash
+pip install pyxel
+```
+
+Ejecuta el juego:
+```bash
+python main.py
+```
+
+## Manual de Usuario
+
+### Controles
+
+| Acción | Tecla |
+|-------|----------|
+| Mover Mario arriba | ↑ |
+| Mover Mario abajo | ↓ |
+| Mover Luigi arriba | W |
+| Mover Luigi abajo | S |
+| Abrir/cerrar menú | M |
+| Seleccionar opción en menú | ↑ / ↓ + Enter |
+| Salir del juego | Q |
+
+*En modo Crazy los controles se invierten.*
+
+
+
+## Objetivo del juego
+
+- Mantener los paquetes moviéndose correctamente a lo largo de las cintas para que lleguen al camión.
+
+### Evita que caigan:
+- Si un jugador no está en el nivel adecuado para interceptar un paquete, se produce un fallo.  
+- Con **3 fallos**, se pierde.
+
+
+## Cómo se juega
+
+1. Elige dificultad desde el menú.  
+2. Los paquetes aparecen en la primera cinta.  
+3. Cada cinta mueve los paquetes hacia la siguiente.  
+4. Mario controla las cintas del lado derecho y Luigi las del izquierdo.  
+5. Sitúa al personaje en el nivel que corresponde cuando un paquete llega al final.  
+
+Si el jugador está en la posición correcta:
+- Se suma un punto.  
+- Se activa una animación breve del personaje.
+
+Si falla:
+- Se reproduce una animación con el jefe Mario.
+- Aumenta el contador de fallos.
+
+Cada 8 paquetes entregados al camión se realiza un *reparto* que puede:
+- Reducir fallos
+- Aumentar dificultad progresivamente
+
+El juego continúa hasta acumular **3 fallos**.
 
 ## Diseño e Implementación del Juego
 
@@ -69,77 +130,3 @@ Gestiona el ciclo principal de Pyxel:
 - Carga de recursos
 - Bucle principal `update()` y `draw()`
 - Activación del menú y creación de nuevas partidas
-
-
-## Manual de Usuario
-
-### Controles
-
-| Acción | Tecla |
-|-------|----------|
-| Mover Mario arriba | ↑ |
-| Mover Mario abajo | ↓ |
-| Mover Luigi arriba | W |
-| Mover Luigi abajo | S |
-| Abrir/cerrar menú | M |
-| Seleccionar opción en menú | ↑ / ↓ + Enter |
-| Salir del juego | Q |
-
-*En modo Crazy los controles se invierten.*
-
-
-
-## Objetivo del juego
-
-- Mantener los paquetes moviéndose correctamente a lo largo de las cintas para que lleguen al camión.
-
-### Evita que caigan:
-- Si un jugador no está en el nivel adecuado para interceptar un paquete, se produce un fallo.  
-- Con **3 fallos**, se pierde.
-
-
-## Cómo se juega
-
-1. Elige dificultad desde el menú.  
-2. Los paquetes aparecen en la primera cinta.  
-3. Cada cinta mueve los paquetes hacia la siguiente.  
-4. Mario controla las cintas del lado derecho y Luigi las del izquierdo.  
-5. Sitúa al personaje en el nivel que corresponde cuando un paquete llega al final.  
-
-Si el jugador está en la posición correcta:
-- Se suma un punto.  
-- Se activa una animación breve del personaje.
-
-Si falla:
-- Se reproduce una animación con el jefe Mario.
-- Aumenta el contador de fallos.
-
-Cada 8 paquetes entregados al camión se realiza un *reparto* que puede:
-- Reducir fallos  
-- Aumentar dificultad progresivamente  
-
-El juego continúa hasta acumular **3 fallos**.
-
-
-## Retos enfrentados
-
-### Sincronización de animaciones con la velocidad de las cintas
-Fue necesario crear un sistema de frames dependiente del tiempo exacto de avance de cada cinta para evitar desajustes visuales.
-
-### Coordinación entre múltiples cintas y jugadores
-El flujo de paquetes entre más de 10 cintas simultáneas obligó a estructurar cuidadosamente el orden de actualización.
-
-### Gestión de animaciones largas que detienen el juego
-Se implementó una clase **Animacion** que pausa todo el sistema mientras se reproduce la secuencia.
-
-### Balance de dificultad
-Ajustar velocidades, número de paquetes y reducción de fallos en cada modo requirió iteraciones para que cada dificultad fuera coherente.
-
-### Optimización y organización del código
-El número elevado de imágenes y animaciones requirió crear clases reutilizables como **Imagen**, **Frame** y listas predefinidas.
-
-## Lecciones aprendidas
-
-- El diseño previo ahorra trabajo: planificar la estructura del proyecto facilitó la creación y evitó errores graves.  
-- Separar lógica y renderizado mejora la legibilidad del código y previene errores difíciles.
-
