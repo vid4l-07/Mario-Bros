@@ -1,5 +1,7 @@
 # Super Mario Bros – Pyxel
 
+![screenshot](.github/screenshot.png)
+
 Este proyecto implementa un juego arcade 2D desarrollado con Pyxel.
 
 ## Instalacion
