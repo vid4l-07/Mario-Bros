@@ -6,6 +6,9 @@ Este proyecto implementa un juego arcade 2D desarrollado con Pyxel.
 
 ## Instalacion
 Clona este repositorio.
+```bash
+git clone https://github.com/vid4l-07/Mario-Bros.git
+```
 
 Instala Pyxel:
 ```bash
