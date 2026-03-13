@@ -4,7 +4,7 @@
 
 Recreación de Mario Bross Game and Watch en Python con la librería Pyxel 
 
-<img src=".github/screenshot.png" alt="descripcion"  width="600">
+<img src=".github/screenshot.png" alt="descripcion"  width="700">
 
 </div>
 
