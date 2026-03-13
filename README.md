@@ -1,8 +1,12 @@
+<div align="center">
+
 # Super Mario Bros – Pyxel
 
-![screenshot](.github/screenshot.png)
+Recreación de Mario Bross Game and Watch en Python con la librería Pyxel 
 
-Este proyecto implementa un juego arcade 2D desarrollado con Pyxel.
+<img src=".github/screenshot.png" alt="descripcion" style="max-width: 400px;">
+
+</div>
 
 ## Instalacion
 Clona este repositorio.
