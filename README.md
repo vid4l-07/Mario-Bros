@@ -10,13 +10,13 @@ Recreación de Mario Bross Game and Watch en Python con la librería Pyxel
 
 ## Instalacion
 ```bash
-# Clona este repositorio.
+# Clona este repositorio
 git clone https://github.com/vid4l-07/Mario-Bros.git
 
-# Instala Pyxel:
+# Instala Pyxel
 pip install pyxel
 
-# Ejecuta el juego:
+# Ejecuta el juego
 python main.py
 ```
 
